@@ -1,0 +1,37 @@
+/* Brutalist theme over @toned/themes base variables. Tweak freely. */
+:root[data-theme='brutalist'] {
+  --link: #0038ff;
+  --colors_bg_default: #cfe0ff;
+  --colors_bg_elevated: #fff;
+  --colors_bg_status_warning: #ffe600;
+  --colors_bg_data_primary: #0038ff;
+  --colors_text_default: #000;
+  --colors_text_on_status_warning: #000;
+  --colors_text_on_important: #fff;
+  --colors_border_interactive: #000;
+  --colors_outline_focus_center: #0038ff;
+  --radius_small: 0;
+  --radius_medium: 0;
+  --radius_large: 0;
+  --border_width_thick: 3px;
+  --shadow_small: 2px 2px 0 #000;
+  --shadow_medium: 4px 4px 0 #000;
+  --shadow_large: 8px 8px 0 #000;
+  --typo_font_sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+/* Dark: soft off-whites and muted borders instead of pure white. */
+:root[data-theme='brutalist'][data-mode='dark'] {
+  --link: #f2cf1d;
+  --colors_bg_default: #14141c;
+  --colors_bg_elevated: #1f1f2b;
+  --colors_bg_status_warning: #e8c41a;
+  --colors_bg_data_primary: #3a5bd9;
+  --colors_text_default: #dcdce6;
+  --colors_text_on_important: #eceef8;
+  --colors_border_interactive: #8c8ca8;
+  --shadow_small: 2px 2px 0 #4a4a63;
+  --shadow_medium: 4px 4px 0 #4a4a63;
+  --shadow_large: 8px 8px 0 #4a4a63;
+}
+body { margin: 0; font-family: var(--typo_font_sans); color: var(--colors_text_default); background: var(--colors_bg_default); }
+a { color: var(--link); font-weight: 700; }
