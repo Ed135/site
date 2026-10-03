@@ -6,8 +6,8 @@ import '@toned/themes/shadcn/config.css'
 import './styles/theme.css'
 import 'virtual:toned.css'
 import manifest from 'virtual:toned.manifest'
-import { ui } from './styles/index.ts'
-import { App } from './App.tsx'
+import { ui } from './styles'
+import { App } from './App'
 
 const renderer = createWebRenderer(ui, { manifest })
 

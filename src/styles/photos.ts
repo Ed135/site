@@ -1,5 +1,5 @@
 // Photography page: gallery grid and upload dropzone.
-import { stylesheet } from './system.ts'
+import { stylesheet } from './system'
 import type { Variants } from '@toned/core'
 
 export const gallery = stylesheet((q) => ({

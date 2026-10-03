@@ -1,5 +1,5 @@
-import { photosRepo as r } from './config.ts'
-import { countryFor } from './tags.ts'
+import { photosRepo as r } from './config'
+import { countryFor } from './tags'
 
 // File names carry the metadata: `YYYY-MM-DD_HHmm_WxH[_CC][-slug].jpg`
 // (date and time taken, pixel size, optional country code; sorts newest first).

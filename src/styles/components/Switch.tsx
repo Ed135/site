@@ -2,7 +2,7 @@
 import type { Variants } from '@toned/core'
 import { useStyles } from '@toned/react'
 import type * as React from 'react'
-import { stylesheet } from '../system.ts'
+import { stylesheet } from '../system'
 
 export const switchStyles = stylesheet((q) => ({
   group: {

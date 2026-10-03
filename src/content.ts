@@ -16,7 +16,7 @@ export const personal = {
 export const posts: { title: string; date: string; summary: string; href: string }[] = []
 
 export const contributions = [
-  { title: 'toned-styles/toned', summary: 'Typed styling for design systems. I contribute to it.', href: 'https://toned.style/' },
+  { title: 'toned-styles/toned', href: 'https://toned.style/' },
 ]
 
 export const stack = [

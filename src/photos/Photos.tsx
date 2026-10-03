@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { createElements } from '@toned/react'
-import { gallery } from '../styles/index.ts'
-import { Card, CardTitle, CardDescription } from '../styles/components/Card.tsx'
-import { photos, groups, flag, formatDate, uploadPhoto, type Photo } from './api.ts'
-import { photosRepo, camera } from './config.ts'
+import { gallery } from '../styles'
+import { Card, CardTitle, CardDescription } from '../styles/components/Card'
+import { photos, groups, flag, formatDate, uploadPhoto, type Photo } from './api'
+import { photosRepo, camera } from './config'
 
 const G = createElements(gallery)
 // No tile is taller than this, portrait or landscape (matches a typical landscape row).

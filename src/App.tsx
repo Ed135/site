@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { createElements } from '@toned/react'
-import { page, nav, section } from './styles/index.ts'
-import { Card, CardTitle, CardDescription } from './styles/components/Card.tsx'
-import { GitHubIcon, LinkedInIcon, HomeIcon } from './styles/components/Icons.tsx'
-import { Badge } from './styles/components/Badge.tsx'
-import { Switch, SwitchGroup, SwitchDivider, SwitchButton, SunIcon, MoonIcon, SystemIcon } from './styles/components/Switch.tsx'
-import { Photos } from './photos/Photos.tsx'
-import { profile, personal, posts, contributions, stack, nav as navLinks } from './content.ts'
+import { page, nav, section } from './styles'
+import { Card, CardTitle, CardDescription } from './styles/components/Card'
+import { GitHubIcon, LinkedInIcon, HomeIcon } from './styles/components/Icons'
+import { Badge } from './styles/components/Badge'
+import { Switch, SwitchGroup, SwitchDivider, SwitchButton, SunIcon, MoonIcon, SystemIcon } from './styles/components/Switch'
+import { Photos } from './photos/Photos'
+import { profile, personal, posts, contributions, stack, nav as navLinks } from './content'
 
 const P = createElements(page)
 const N = createElements(nav)
@@ -169,7 +169,7 @@ function Home() {
       <Section id="oss" title="Open source 🌱">
         <S>
           <S.Grid>
-            {contributions.map((c) => <LinkCard key={c.title} title={c.title} body={c.summary} href={c.href} />)}
+            {contributions.map((c) => <LinkCard key={c.title} title={c.title} href={c.href} />)}
           </S.Grid>
         </S>
       </Section>

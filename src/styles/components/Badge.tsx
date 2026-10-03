@@ -1,7 +1,7 @@
 // Badge, adapted from the Toned UI example.
 import { useStyles } from '@toned/react'
 import type * as React from 'react'
-import { stylesheet } from '../system.ts'
+import { stylesheet } from '../system'
 
 export const badgeStyles = stylesheet({
   root: {

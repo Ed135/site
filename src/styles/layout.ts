@@ -1,5 +1,5 @@
 // Page layout sheets: shell, nav, sections.
-import { stylesheet } from './system.ts'
+import { stylesheet } from './system'
 
 // Responsive card grid; Toned has no grid-track token, so it's a web-only style.
 const grid = (min: number) =>
