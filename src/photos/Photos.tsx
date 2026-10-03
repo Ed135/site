@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { createElements } from '@toned/react'
 import { gallery } from '../styles/index.ts'
-import { Card, CardTitle, CardDescription } from '../styles/components/card.tsx'
+import { Card, CardTitle, CardDescription } from '../styles/components/Card.tsx'
 import { listPhotos, uploadPhoto, type Photo } from './api.ts'
 import { photosRepo } from './config.ts'
 

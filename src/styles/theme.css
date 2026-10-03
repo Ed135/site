@@ -68,3 +68,9 @@ nav[data-stuck='true'] { box-shadow: 0 4px 0 var(--colors_border_interactive); }
   from { clip-path: polygon(0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0); }
   to { clip-path: polygon(0 0, 250% 0, 205% 30%, 175% 85%, 135% 100%, 110% 150%, 70% 160%, 45% 215%, 0 235%); }
 }
+
+/* Keyboard focus: thick square outline, offset so it reads on any surface.
+   Black on the light page (~15:1 vs #cfe0ff), yellow on dark (~15:1 vs #14141c); WCAG asks for 3:1. */
+:root[data-theme='brutalist'] { --focus: #000; }
+:root[data-theme='brutalist'][data-mode='dark'] { --focus: #ffe600; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 0; }

@@ -6,9 +6,9 @@
 //   components/   Card, Badge, Switch (adapted from the Toned UI example)
 import { page, nav, section } from './layout.ts'
 import { gallery } from './photos.ts'
-import { cardStyles } from './components/card.tsx'
-import { badgeStyles } from './components/badge.tsx'
-import { switchStyles } from './components/switch.tsx'
+import { cardStyles } from './components/Card.tsx'
+import { badgeStyles } from './components/Badge.tsx'
+import { switchStyles } from './components/Switch.tsx'
 
 export { ui } from './system.ts'
 export { page, nav, section, gallery }
