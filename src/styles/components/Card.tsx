@@ -22,7 +22,7 @@ export const cardStyles = stylesheet((q) => ({
   title: { typography: 'heading-3', textTransform: 'uppercase' },
   description: { typography: 'body-medium' },
 })).variants(
-  ($: Variants<{ tone: 'default' | 'link' | 'accent' | 'highlight' | 'green'; size: 'md' | 'lg' | 'section'; center: boolean; feature: boolean }>, q) => ({
+  ($: Variants<{ tone: 'default' | 'link' | 'accent' | 'highlight' | 'green'; size: 'md' | 'lg' | 'section'; center: boolean; feature: boolean; compact: boolean }>, q) => ({
     [$.tone('link')]: { root: { ':hover': { bgColor: 'status_warning', textColor: 'on_status_warning' } } },
     // Feature cards: roomier and heavier shadow as the screen grows.
     [$.tone('accent')]: { root: { bgColor: 'data_primary', textColor: 'on_important', padding: 5, [q.media('md')]: { padding: 8, shadow: 'large' } } },
@@ -30,6 +30,8 @@ export const cardStyles = stylesheet((q) => ({
     [$.tone('green')]: { root: { bgColor: 'status_success', textColor: 'on_status_success', padding: 5, [q.media('md')]: { padding: 8, shadow: 'large' } } },
     // Same roomy padding and heavy shadow as the feature tones, for other card types.
     [$.feature(true)]: { root: { padding: 5, [q.media('md')]: { padding: 8, shadow: 'large' } } },
+    // Slim strip: tight padding for one-line cards.
+    [$.compact(true)]: { root: { padding: 2, paddingX: 4, shadow: 'small', [q.media('md')]: { padding: 2, paddingX: 4, shadow: 'small' } } },
     [$.center(true)]: { root: { justifyContent: 'center' } },
     [$.size('section')]: { title: { typography: 'heading-2', [q.media('md')]: { typography: 'heading-1' } } },
     [$.size('lg')]: {
@@ -37,15 +39,15 @@ export const cardStyles = stylesheet((q) => ({
       description: { typography: 'body-medium', [q.media('md')]: { typography: 'body-large' } },
     },
   }),
-  { defaults: { tone: 'default', size: 'md', center: false, feature: false } },
+  { defaults: { tone: 'default', size: 'md', center: false, feature: false, compact: false } },
 )
 
 type Tone = 'default' | 'link' | 'accent' | 'highlight' | 'green'
 type Size = 'md' | 'lg' | 'section'
 type Tag = 'div' | 'a' | 'section' | 'header'
 
-export function Card({ as: Tag = 'div', tone = 'default', center = false, feature = false, className, style, ...props }: React.ComponentProps<'a'> & { as?: Tag; tone?: Tone; center?: boolean; feature?: boolean }) {
-  const s = useStyles(cardStyles, { tone, center, feature })
+export function Card({ as: Tag = 'div', tone = 'default', center = false, feature = false, compact = false, className, style, ...props }: React.ComponentProps<'a'> & { as?: Tag; tone?: Tone; center?: boolean; feature?: boolean; compact?: boolean }) {
+  const s = useStyles(cardStyles, { tone, center, feature, compact })
   const Comp = Tag as React.ElementType
   return <Comp {...s.root.with({ className, style })} {...props} />
 }
