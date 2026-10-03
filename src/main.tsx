@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { TonedProvider, createElements } from '@toned/react'
 import { createWebRenderer } from '@toned/core/server'
@@ -9,14 +9,18 @@ import 'virtual:toned.css'
 import manifest from 'virtual:toned.manifest'
 import { ui, page, nav, section } from './styles/index.ts'
 import { Card, CardTitle, CardDescription } from './styles/components/card.tsx'
+import { GitHubIcon, LinkedInIcon, HomeIcon } from './styles/components/icons.tsx'
 import { Badge } from './styles/components/badge.tsx'
 import { Switch, SwitchGroup, SwitchDivider, SwitchButton, SunIcon, MoonIcon, SystemIcon } from './styles/components/switch.tsx'
-import { profile, posts, contributions, stack, nav as navLinks } from './content.ts'
+import { Photos } from './photos/Photos.tsx'
+import { profile, personal, posts, contributions, stack, nav as navLinks } from './content.ts'
 
 const renderer = createWebRenderer(ui, { manifest })
 const P = createElements(page)
 const N = createElements(nav)
 const S = createElements(section)
+
+const navIcons: Record<string, React.ReactNode> = { github: GitHubIcon, linkedin: LinkedInIcon }
 
 // External links open in a new tab.
 const ext = (href: string) => (/^https?:/.test(href) ? { target: '_blank', rel: 'noopener noreferrer' } : {})
@@ -72,17 +76,17 @@ function ModeToggle() {
 }
 
 // undefined until the nav first sticks, so nothing animates on load.
-function useStuck(ref: React.RefObject<HTMLElement | null>) {
+function useStuck() {
   const [stuck, setStuck] = useState<boolean>()
   useEffect(() => {
     const update = () => {
-      const now = (ref.current?.getBoundingClientRect().top ?? 1) <= 0
+      const now = scrollY > 0 // the nav sits at the very top, so any scroll means it is stuck
       setStuck((prev) => (prev === undefined && !now ? undefined : now))
     }
     update()
     addEventListener('scroll', update, { passive: true })
     return () => removeEventListener('scroll', update)
-  }, [ref])
+  }, [])
   return stuck
 }
 
@@ -99,7 +103,7 @@ function Section({ id, title, children }: { id: string; title: string; children:
 
 function LinkCard({ title, meta, body, href }: { title: string; meta?: string; body?: string; href: string }) {
   return (
-    <Card as="a" tone="link" href={href} {...ext(href)}>
+    <Card as="a" tone="link" feature href={href} {...ext(href)}>
       <CardTitle>{title}</CardTitle>
       {meta && <CardDescription>{meta}</CardDescription>}
       {body && <CardDescription>{body}</CardDescription>}
@@ -107,59 +111,115 @@ function LinkCard({ title, meta, body, href }: { title: string; meta?: string; b
   )
 }
 
-function App() {
-  const navRef = useRef<HTMLElement>(null)
-  const stuck = useStuck(navRef)
+function Home() {
   // Sections render after load, so honour a direct #hash link once they exist.
   useEffect(() => {
-    if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView()
+    if (location.hash && !location.hash.startsWith('#/')) document.getElementById(location.hash.slice(1))?.scrollIntoView()
   }, [])
+
+  return (
+    <>
+      <S>
+        <S.Split as="header">
+          <Card tone="highlight">
+            <CardTitle as="h1" size="lg">{profile.name}</CardTitle>
+            <CardDescription size="lg">{profile.role}</CardDescription>
+            <CardDescription>{profile.summary}</CardDescription>
+          </Card>
+          <Card tone="accent">
+            <CardTitle as="h2" size="section">Stack</CardTitle>
+            <S>
+              <S.Tags>{stack.map((x) => <Badge key={x}>{x}</Badge>)}</S.Tags>
+            </S>
+          </Card>
+        </S.Split>
+      </S>
+      <S>
+        <S.Split>
+          <Card tone="green">
+            <CardDescription size="lg">{personal.lead}</CardDescription>
+            <S>
+              <S.Tags>
+                {personal.things.map((x, i) => (
+                  <Badge key={x} style={{ transform: `rotate(${[-2, 1.5, -1, 2][i % 4]}deg)` }}>{x}</Badge>
+                ))}
+              </S.Tags>
+            </S>
+          </Card>
+          <Card as="a" tone="link" center feature href="#/photos">
+            <CardTitle as="h2" size="section">Photos 📷</CardTitle>
+          </Card>
+        </S.Split>
+      </S>
+      <Section id="writing" title="Writing ✍️">
+        <S>
+          <S.Grid>
+            {posts.length === 0 && (
+              <Card feature>
+                <CardTitle>Coming soon</CardTitle>
+                <CardDescription>Posts will land here.</CardDescription>
+              </Card>
+            )}
+            {posts.map((p) => <LinkCard key={p.title} {...p} meta={p.date} body={p.summary} />)}
+          </S.Grid>
+        </S>
+      </Section>
+      <Section id="oss" title="Open source 🌱">
+        <S>
+          <S.Grid>
+            {contributions.map((c) => <LinkCard key={c.title} title={c.title} body={c.summary} href={c.href} />)}
+          </S.Grid>
+        </S>
+      </Section>
+    </>
+  )
+}
+
+function PhotosPage({ upload }: { upload: boolean }) {
+  useEffect(() => { window.scrollTo(0, 0) }, [])
+  return (
+    <S>
+      <S.Root as="section">
+        <S.Title as="a" href="#/photos">Photos 📷</S.Title>
+        <Photos upload={upload} />
+      </S.Root>
+    </S>
+  )
+}
+
+function useHash() {
+  const [hash, setHash] = useState(location.hash)
+  useEffect(() => {
+    const on = () => setHash(location.hash)
+    addEventListener('hashchange', on)
+    return () => removeEventListener('hashchange', on)
+  }, [])
+  return hash
+}
+
+function App() {
+  const hash = useHash()
+  const stuck = useStuck()
 
   return (
     <P>
       <P.Root as="main">
-        <P.Inner>
-          <N>
-            <N.Root as="nav" ref={navRef} data-stuck={stuck === undefined ? undefined : String(stuck)}>
-              {navLinks.map((l) => <N.Link key={l.href} as="a" href={l.href} {...ext(l.href)}>{l.title}</N.Link>)}
+        <N>
+          <N.Root as="nav" data-stuck={stuck === undefined ? undefined : String(stuck)}>
+            <N.Link as="a" href="#" aria-label="Home">{HomeIcon}</N.Link>
+            <N.Group>
+              {navLinks.map((l) => (
+                <N.Link key={l.href} as="a" href={l.href} aria-label={l.title} {...ext(l.href)}>
+                  {navIcons[l.icon]}
+                  <N.Label as="span">{l.title}</N.Label>
+                </N.Link>
+              ))}
               <ModeToggle />
-            </N.Root>
-          </N>
-          <S>
-            <S.Split as="header">
-              <Card tone="highlight">
-                <CardTitle as="h1" size="lg">{profile.name}</CardTitle>
-                <CardDescription size="lg">{profile.role}</CardDescription>
-                <CardDescription>{profile.summary}</CardDescription>
-              </Card>
-              <Card tone="accent">
-                <CardTitle as="h2" size="section">Stack</CardTitle>
-                <S>
-                  <S.Tags>{stack.map((x) => <Badge key={x}>{x}</Badge>)}</S.Tags>
-                </S>
-              </Card>
-            </S.Split>
-          </S>
-          <Section id="writing" title="Writing">
-            <S>
-              <S.Grid>
-                {posts.length === 0 && (
-                  <Card>
-                    <CardTitle>Coming soon</CardTitle>
-                    <CardDescription>Posts will land here.</CardDescription>
-                  </Card>
-                )}
-                {posts.map((p) => <LinkCard key={p.title} {...p} meta={p.date} body={p.summary} />)}
-              </S.Grid>
-            </S>
-          </Section>
-          <Section id="oss" title="Open source">
-            <S>
-              <S.Grid>
-                {contributions.map((c) => <LinkCard key={c.title} title={c.title} body={c.summary} href={c.href} />)}
-              </S.Grid>
-            </S>
-          </Section>
+            </N.Group>
+          </N.Root>
+        </N>
+        <P.Inner>
+          {hash.startsWith('#/photos') ? <PhotosPage upload={hash === '#/photos/upload'} /> : <Home />}
         </P.Inner>
       </P.Root>
     </P>

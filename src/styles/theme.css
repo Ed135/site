@@ -4,7 +4,9 @@
   --sel-bg: #000;
   --sel-fg: #ffe600;
   --colors_bg_default: #cfe0ff;
-  --colors_bg_subtle: #dde8ff;
+  --colors_bg_subtle: #eef3ff;
+  --colors_bg_status_success: #00d26a;
+  --colors_text_on_status_success: #000;
   --colors_bg_elevated: #fff;
   --colors_bg_status_warning: #ffe600;
   --colors_bg_data_primary: #0038ff;
@@ -28,7 +30,9 @@
   --sel-bg: #8fa8ff;
   --sel-fg: #000;
   --colors_bg_default: #14141c;
-  --colors_bg_subtle: #1b1b26;
+  --colors_bg_subtle: #252536;
+  --colors_bg_status_success: #3fb37a;
+  --colors_text_on_status_success: #14141c;
   --colors_bg_elevated: #1f1f2b;
   --colors_bg_status_warning: #e8c41a;
   --colors_bg_data_primary: #3a5bd9;
@@ -47,11 +51,11 @@ a { color: var(--link); font-weight: 700; }
 /* Text selection: hard black-on-yellow, inverted in dark mode. */
 ::selection { background: var(--sel-bg); color: var(--sel-fg); text-shadow: none; }
 
-/* Sticky nav: springy drop when it sticks, small settle when it releases. */
+/* Sticky nav: the hard shadow snaps in and out in a few steps, no easing. */
 nav[data-stuck='true'] { box-shadow: 0 4px 0 var(--colors_border_interactive); }
 @media (prefers-reduced-motion: no-preference) {
-  nav[data-stuck='true'] { animation: nav-stick 0.55s cubic-bezier(0.34, 1.56, 0.64, 1); }
-  nav[data-stuck='false'] { animation: nav-unstick 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  nav[data-stuck='true'] { animation: nav-stick 0.15s steps(3, end); }
+  nav[data-stuck='false'] { animation: nav-unstick 0.15s steps(3, end); }
 }
-@keyframes nav-stick { from { transform: translateY(-100%); } to { transform: translateY(0); } }
-@keyframes nav-unstick { from { transform: translateY(-12px); } to { transform: translateY(0); } }
+@keyframes nav-stick { from { box-shadow: 0 0 0 var(--colors_border_interactive); } }
+@keyframes nav-unstick { from { box-shadow: 0 4px 0 var(--colors_border_interactive); } to { box-shadow: 0 0 0 var(--colors_border_interactive); } }

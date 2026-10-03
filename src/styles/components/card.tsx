@@ -4,39 +4,48 @@ import { useStyles } from '@toned/react'
 import type * as React from 'react'
 import { stylesheet } from '../system.ts'
 
-export const cardStyles = stylesheet({
+export const cardStyles = stylesheet((q) => ({
   root: {
     display: 'flex',
     flexLayout: 'column',
     gap: 2,
-    padding: 5,
+    padding: 4,
     bgColor: 'elevated',
     textColor: 'default',
     borderWidth: 'thick',
     borderColor: 'interactive',
     borderRadius: 'none',
-    shadow: 'medium',
+    shadow: 'small',
+    [q.media('md')]: { padding: 5, shadow: 'medium' },
     textDecoration: 'none',
   },
   title: { typography: 'heading-3', textTransform: 'uppercase' },
   description: { typography: 'body-medium' },
-}).variants(
-  ($: Variants<{ tone: 'default' | 'link' | 'accent' | 'highlight'; size: 'md' | 'lg' | 'section' }>) => ({
+})).variants(
+  ($: Variants<{ tone: 'default' | 'link' | 'accent' | 'highlight' | 'green'; size: 'md' | 'lg' | 'section'; center: boolean; feature: boolean }>, q) => ({
     [$.tone('link')]: { root: { ':hover': { bgColor: 'status_warning', textColor: 'on_status_warning' } } },
-    [$.tone('accent')]: { root: { bgColor: 'data_primary', textColor: 'on_important', padding: 8, shadow: 'large' } },
-    [$.tone('highlight')]: { root: { bgColor: 'status_warning', textColor: 'on_status_warning', padding: 8, shadow: 'large' } },
-    [$.size('section')]: { title: { typography: 'heading-1' } },
-    [$.size('lg')]: { title: { typography: 'display-large' }, description: { typography: 'body-large' } },
+    // Feature cards: roomier and heavier shadow as the screen grows.
+    [$.tone('accent')]: { root: { bgColor: 'data_primary', textColor: 'on_important', padding: 5, [q.media('md')]: { padding: 8, shadow: 'large' } } },
+    [$.tone('highlight')]: { root: { bgColor: 'status_warning', textColor: 'on_status_warning', padding: 5, [q.media('md')]: { padding: 8, shadow: 'large' } } },
+    [$.tone('green')]: { root: { bgColor: 'status_success', textColor: 'on_status_success', padding: 5, [q.media('md')]: { padding: 8, shadow: 'large' } } },
+    // Same roomy padding and heavy shadow as the feature tones, for other card types.
+    [$.feature(true)]: { root: { padding: 5, [q.media('md')]: { padding: 8, shadow: 'large' } } },
+    [$.center(true)]: { root: { justifyContent: 'center' } },
+    [$.size('section')]: { title: { typography: 'heading-2', [q.media('md')]: { typography: 'heading-1' } } },
+    [$.size('lg')]: {
+      title: { typography: 'display-small', [q.media('md')]: { typography: 'display-medium' }, [q.media('lg')]: { typography: 'display-large' } },
+      description: { typography: 'body-medium', [q.media('md')]: { typography: 'body-large' } },
+    },
   }),
-  { defaults: { tone: 'default', size: 'md' } },
+  { defaults: { tone: 'default', size: 'md', center: false, feature: false } },
 )
 
-type Tone = 'default' | 'link' | 'accent' | 'highlight'
+type Tone = 'default' | 'link' | 'accent' | 'highlight' | 'green'
 type Size = 'md' | 'lg' | 'section'
 type Tag = 'div' | 'a' | 'section' | 'header'
 
-export function Card({ as: Tag = 'div', tone = 'default', className, style, ...props }: React.ComponentProps<'a'> & { as?: Tag; tone?: Tone }) {
-  const s = useStyles(cardStyles, { tone })
+export function Card({ as: Tag = 'div', tone = 'default', center = false, feature = false, className, style, ...props }: React.ComponentProps<'a'> & { as?: Tag; tone?: Tone; center?: boolean; feature?: boolean }) {
+  const s = useStyles(cardStyles, { tone, center, feature })
   const Comp = Tag as React.ElementType
   return <Comp {...s.root.with({ className, style })} {...props} />
 }

@@ -4,7 +4,7 @@ import { useStyles } from '@toned/react'
 import type * as React from 'react'
 import { stylesheet } from '../system.ts'
 
-export const switchStyles = stylesheet({
+export const switchStyles = stylesheet((q) => ({
   group: {
     $kind: 'view',
     display: 'inline-flex',
@@ -46,7 +46,9 @@ export const switchStyles = stylesheet({
     typography: 'label-large',
     textTransform: 'uppercase',
   },
-}).variants(
+  // Label text: hidden on very small screens so only the icon shows.
+  text: { $kind: 'text', display: 'none', [q.media('sm40')]: { display: 'inline' } },
+})).variants(
   ($: Variants<{ active: boolean }>) => ({
     [$.active(true)]: {
       option: { bgColor: 'status_warning', textColor: 'on_status_warning' },
@@ -58,7 +60,7 @@ export const switchStyles = stylesheet({
 
 function Option({ active, icon, children }: { active: boolean; icon: React.ReactNode; children: React.ReactNode }) {
   const s = useStyles(switchStyles, { active })
-  return <span {...s.option}>{icon}{children}</span>
+  return <span {...s.option}>{icon}<span {...s.text}>{children}</span></span>
 }
 
 export function SwitchGroup({ children }: { children: React.ReactNode }) {
