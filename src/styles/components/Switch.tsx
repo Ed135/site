@@ -26,8 +26,9 @@ export const switchStyles = stylesheet((q) => ({
     display: 'inline-flex',
     alignItems: 'center',
     paddingX: 3,
+    bgColor: 'elevated', // set by class (not an inline reset) so the active state's yellow can override it
     textColor: 'default',
-    '@platform web': { $style: { cursor: 'pointer', margin: 0, border: 0, background: 'none', boxShadow: 'none' } },
+    '@platform web': { $style: { cursor: 'pointer', margin: 0, border: 0, boxShadow: 'none' } },
   },
   // Short inset separator, not full height.
   divider: {
