@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { TonedProvider, createElements } from '@toned/react'
 import { createWebRenderer } from '@toned/core/server'
@@ -10,7 +10,7 @@ import manifest from 'virtual:toned.manifest'
 import { ui, page, nav, section } from './styles/index.ts'
 import { Card, CardTitle, CardDescription } from './styles/components/card.tsx'
 import { Badge } from './styles/components/badge.tsx'
-import { Switch, SunIcon, MoonIcon } from './styles/components/switch.tsx'
+import { Switch, SwitchGroup, SwitchDivider, SwitchButton, SunIcon, MoonIcon, SystemIcon } from './styles/components/switch.tsx'
 import { profile, posts, contributions, stack, nav as navLinks } from './content.ts'
 
 const renderer = createWebRenderer(ui, { manifest })
@@ -18,22 +18,53 @@ const P = createElements(page)
 const N = createElements(nav)
 const S = createElements(section)
 
+type Pref = 'system' | 'light' | 'dark'
+const query = matchMedia('(prefers-color-scheme: dark)')
+
+function readPref(): Pref {
+  try {
+    const v = localStorage.getItem('mode')
+    if (v === 'light' || v === 'dark') return v
+  } catch {}
+  return 'system'
+}
+
+// Default is "system": follows the OS and moves the switch with it.
 function ModeToggle() {
-  const [dark, setDark] = useState(() => document.documentElement.dataset.mode === 'dark')
-  const flip = () => {
-    const next = dark ? 'light' : 'dark'
-    document.documentElement.dataset.mode = next
-    try { localStorage.setItem('mode', next) } catch {}
-    setDark(!dark)
+  const [pref, setPref] = useState<Pref>(readPref)
+  const [systemDark, setSystemDark] = useState(query.matches)
+  const dark = pref === 'system' ? systemDark : pref === 'dark'
+
+  useEffect(() => {
+    const onChange = () => setSystemDark(query.matches)
+    query.addEventListener('change', onChange)
+    return () => query.removeEventListener('change', onChange)
+  }, [])
+
+  useEffect(() => {
+    document.documentElement.dataset.mode = dark ? 'dark' : 'light'
+  }, [dark])
+
+  const choose = (next: Pref) => {
+    setPref(next)
+    try {
+      if (next === 'system') localStorage.removeItem('mode')
+      else localStorage.setItem('mode', next)
+    } catch {}
   }
+
   return (
-    <Switch
-      checked={dark}
-      onCheckedChange={flip}
-      label="Dark mode"
-      off={{ text: 'Light', icon: SunIcon }}
-      on={{ text: 'Dark', icon: MoonIcon }}
-    />
+    <SwitchGroup>
+      <Switch
+        checked={dark}
+        onCheckedChange={(on) => choose(on ? 'dark' : 'light')}
+        label="Dark mode"
+        off={{ text: 'Light', icon: SunIcon }}
+        on={{ text: 'Dark', icon: MoonIcon }}
+      />
+      <SwitchDivider />
+      <SwitchButton active={pref === 'system'} label="Match system setting" icon={SystemIcon} onClick={() => choose('system')} />
+    </SwitchGroup>
   )
 }
 
@@ -41,7 +72,7 @@ function Section({ id, title, children }: { id: string; title: string; children:
   return (
     <S>
       <S.Root as="section" id={id}>
-        <S.Title as="h2">{title}</S.Title>
+        <S.Title as="a" href={`#${id}`}>{title}</S.Title>
         {children}
       </S.Root>
     </S>
@@ -59,6 +90,11 @@ function LinkCard({ title, meta, body, href }: { title: string; meta?: string; b
 }
 
 function App() {
+  // Sections render after load, so honour a direct #hash link once they exist.
+  useEffect(() => {
+    if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView()
+  }, [])
+
   return (
     <P>
       <P.Root as="main">

@@ -1,6 +1,8 @@
 /* Brutalist theme over @toned/themes base variables. Tweak freely. */
 :root[data-theme='brutalist'] {
   --link: #0038ff;
+  --sel-bg: #000;
+  --sel-fg: #ffe600;
   --colors_bg_default: #cfe0ff;
   --colors_bg_elevated: #fff;
   --colors_bg_status_warning: #ffe600;
@@ -22,6 +24,8 @@
 /* Dark: soft off-whites and muted borders instead of pure white. */
 :root[data-theme='brutalist'][data-mode='dark'] {
   --link: #f2cf1d;
+  --sel-bg: #8fa8ff;
+  --sel-fg: #000;
   --colors_bg_default: #14141c;
   --colors_bg_elevated: #1f1f2b;
   --colors_bg_status_warning: #e8c41a;
@@ -33,5 +37,10 @@
   --shadow_medium: 4px 4px 0 #4a4a63;
   --shadow_large: 8px 8px 0 #4a4a63;
 }
+html { scroll-behavior: smooth; }
+section { scroll-margin-top: 24px; }
 body { margin: 0; font-family: var(--typo_font_sans); color: var(--colors_text_default); background: var(--colors_bg_default); }
 a { color: var(--link); font-weight: 700; }
+
+/* Text selection: hard black-on-yellow, inverted in dark mode. */
+::selection { background: var(--sel-bg); color: var(--sel-fg); text-shadow: none; }

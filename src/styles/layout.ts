@@ -20,7 +20,7 @@ export const nav = stylesheet({
 
 export const section = stylesheet({
   Root: { $kind: 'view', display: 'flex', flexLayout: 'column', gap: 4 },
-  Title: { $kind: 'text', typography: 'heading-1', textTransform: 'uppercase' },
+  Title: { $kind: 'text', typography: 'heading-1', textTransform: 'uppercase', textColor: 'default', textDecoration: 'none', ':hover': { textDecoration: 'underline' } },
   Grid: { $kind: 'view', ...grid(300) },
   Split: { $kind: 'view', ...grid(320), gap: 6 },
   Tags: { $kind: 'view', display: 'flex', flexLayout: 'row', flexWrap: 'wrap', gap: 3 },
