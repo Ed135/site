@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { createRoot } from 'react-dom/client'
+import { flushSync } from 'react-dom'
 import { TonedProvider, createElements } from '@toned/react'
 import { createWebRenderer } from '@toned/core/server'
 import { webHost } from '@toned/react/hosts/web'
@@ -52,8 +53,17 @@ function ModeToggle() {
     document.documentElement.dataset.mode = dark ? 'dark' : 'light'
   }, [dark])
 
+  // Wipe between modes with the View Transitions API (styled in theme.css); falls back to an instant swap.
   const choose = (next: Pref) => {
-    setPref(next)
+    const apply = () => {
+      setPref(next)
+      document.documentElement.dataset.mode = (next === 'system' ? systemDark : next === 'dark') ? 'dark' : 'light'
+    }
+    if (document.startViewTransition && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.startViewTransition(() => flushSync(apply))
+    } else {
+      apply()
+    }
     try {
       if (next === 'system') localStorage.removeItem('mode')
       else localStorage.setItem('mode', next)
@@ -210,7 +220,7 @@ function App() {
             <N.Group>
               {navLinks.map((l) => (
                 <N.Link key={l.href} as="a" href={l.href} aria-label={l.title} {...ext(l.href)}>
-                  {navIcons[l.icon]}
+                  <N.Icon as="span">{navIcons[l.icon]}</N.Icon>
                   <N.Label as="span">{l.title}</N.Label>
                 </N.Link>
               ))}

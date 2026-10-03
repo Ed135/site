@@ -48,6 +48,8 @@ export const nav = stylesheet((q) => ({
   // Right-hand cluster: links + theme switch.
   Group: { $kind: 'view', display: 'flex', flexLayout: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 3, [q.media('md')]: { gap: 4 } },
   Link: { $kind: 'view', display: 'inline-flex', alignItems: 'center', gap: 1.5, textColor: 'default', typography: 'label-large', textTransform: 'uppercase', textDecoration: 'none' },
+  // Brand icon: hidden on large screens, where the text label is enough.
+  Icon: { $kind: 'view', display: 'inline-flex', [q.media('lg')]: { display: 'none' } },
   // Text label: hidden on very small screens so only the icon shows.
   Label: { $kind: 'text', display: 'none', [q.media('sm40')]: { display: 'inline' } },
 }))

@@ -59,3 +59,12 @@ nav[data-stuck='true'] { box-shadow: 0 4px 0 var(--colors_border_interactive); }
 }
 @keyframes nav-stick { from { box-shadow: 0 0 0 var(--colors_border_interactive); } }
 @keyframes nav-unstick { from { box-shadow: 0 4px 0 var(--colors_border_interactive); } to { box-shadow: 0 0 0 var(--colors_border_interactive); } }
+
+/* Light/dark change: the new theme wipes in from the top left to the bottom right with a jagged edge.
+   The polygon grows from a point; its far edge is a ragged diagonal, so the front is uneven. */
+::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+::view-transition-new(root) { animation: mode-wipe 0.8s linear; }
+@keyframes mode-wipe {
+  from { clip-path: polygon(0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0); }
+  to { clip-path: polygon(0 0, 250% 0, 205% 30%, 175% 85%, 135% 100%, 110% 150%, 70% 160%, 45% 215%, 0 235%); }
+}
