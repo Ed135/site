@@ -21,17 +21,18 @@ export const cardStyles = stylesheet({
   title: { typography: 'heading-3', textTransform: 'uppercase' },
   description: { typography: 'body-medium' },
 }).variants(
-  ($: Variants<{ tone: 'default' | 'link' | 'accent' | 'highlight'; size: 'md' | 'lg' }>) => ({
+  ($: Variants<{ tone: 'default' | 'link' | 'accent' | 'highlight'; size: 'md' | 'lg' | 'section' }>) => ({
     [$.tone('link')]: { root: { ':hover': { bgColor: 'status_warning', textColor: 'on_status_warning' } } },
     [$.tone('accent')]: { root: { bgColor: 'data_primary', textColor: 'on_important', padding: 8, shadow: 'large' } },
     [$.tone('highlight')]: { root: { bgColor: 'status_warning', textColor: 'on_status_warning', padding: 8, shadow: 'large' } },
+    [$.size('section')]: { title: { typography: 'heading-1' } },
     [$.size('lg')]: { title: { typography: 'display-large' }, description: { typography: 'body-large' } },
   }),
   { defaults: { tone: 'default', size: 'md' } },
 )
 
 type Tone = 'default' | 'link' | 'accent' | 'highlight'
-type Size = 'md' | 'lg'
+type Size = 'md' | 'lg' | 'section'
 type Tag = 'div' | 'a' | 'section' | 'header'
 
 export function Card({ as: Tag = 'div', tone = 'default', className, style, ...props }: React.ComponentProps<'a'> & { as?: Tag; tone?: Tone }) {

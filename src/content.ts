@@ -10,7 +10,7 @@ export const profile = {
 export const posts: { title: string; date: string; summary: string; href: string }[] = []
 
 export const contributions = [
-  { title: 'toned-styles/toned', summary: 'Typed styling for design systems. I contribute to it.', href: 'https://github.com/toned-styles/toned' },
+  { title: 'toned-styles/toned', summary: 'Typed styling for design systems. I contribute to it.', href: 'https://toned.style/' },
 ]
 
 export const stack = [
@@ -29,10 +29,8 @@ export const stack = [
   'AI dev tools',
 ]
 
-// External links render once, in the nav, after the section anchors.
+// External links render once, in the nav.
 export const nav = [
-  { title: 'Writing', href: '#writing' },
-  { title: 'Open source', href: '#oss' },
   { title: 'GitHub', href: 'https://github.com/Ed135' },
   { title: 'LinkedIn', href: 'https://linkedin.com/in/edward-bieda' },
 ]

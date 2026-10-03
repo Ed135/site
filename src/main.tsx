@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { TonedProvider, createElements } from '@toned/react'
 import { createWebRenderer } from '@toned/core/server'
@@ -17,6 +17,9 @@ const renderer = createWebRenderer(ui, { manifest })
 const P = createElements(page)
 const N = createElements(nav)
 const S = createElements(section)
+
+// External links open in a new tab.
+const ext = (href: string) => (/^https?:/.test(href) ? { target: '_blank', rel: 'noopener noreferrer' } : {})
 
 type Pref = 'system' | 'light' | 'dark'
 const query = matchMedia('(prefers-color-scheme: dark)')
@@ -68,6 +71,21 @@ function ModeToggle() {
   )
 }
 
+// undefined until the nav first sticks, so nothing animates on load.
+function useStuck(ref: React.RefObject<HTMLElement | null>) {
+  const [stuck, setStuck] = useState<boolean>()
+  useEffect(() => {
+    const update = () => {
+      const now = (ref.current?.getBoundingClientRect().top ?? 1) <= 0
+      setStuck((prev) => (prev === undefined && !now ? undefined : now))
+    }
+    update()
+    addEventListener('scroll', update, { passive: true })
+    return () => removeEventListener('scroll', update)
+  }, [ref])
+  return stuck
+}
+
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
     <S>
@@ -81,7 +99,7 @@ function Section({ id, title, children }: { id: string; title: string; children:
 
 function LinkCard({ title, meta, body, href }: { title: string; meta?: string; body?: string; href: string }) {
   return (
-    <Card as="a" tone="link" href={href}>
+    <Card as="a" tone="link" href={href} {...ext(href)}>
       <CardTitle>{title}</CardTitle>
       {meta && <CardDescription>{meta}</CardDescription>}
       {body && <CardDescription>{body}</CardDescription>}
@@ -90,6 +108,8 @@ function LinkCard({ title, meta, body, href }: { title: string; meta?: string; b
 }
 
 function App() {
+  const navRef = useRef<HTMLElement>(null)
+  const stuck = useStuck(navRef)
   // Sections render after load, so honour a direct #hash link once they exist.
   useEffect(() => {
     if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView()
@@ -100,8 +120,8 @@ function App() {
       <P.Root as="main">
         <P.Inner>
           <N>
-            <N.Root as="nav">
-              {navLinks.map((l) => <N.Link key={l.href} as="a" href={l.href}>{l.title}</N.Link>)}
+            <N.Root as="nav" ref={navRef} data-stuck={stuck === undefined ? undefined : String(stuck)}>
+              {navLinks.map((l) => <N.Link key={l.href} as="a" href={l.href} {...ext(l.href)}>{l.title}</N.Link>)}
               <ModeToggle />
             </N.Root>
           </N>
@@ -113,7 +133,7 @@ function App() {
                 <CardDescription>{profile.summary}</CardDescription>
               </Card>
               <Card tone="accent">
-                <CardTitle as="h2">Stack</CardTitle>
+                <CardTitle as="h2" size="section">Stack</CardTitle>
                 <S>
                   <S.Tags>{stack.map((x) => <Badge key={x}>{x}</Badge>)}</S.Tags>
                 </S>

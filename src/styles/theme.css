@@ -4,6 +4,7 @@
   --sel-bg: #000;
   --sel-fg: #ffe600;
   --colors_bg_default: #cfe0ff;
+  --colors_bg_subtle: #dde8ff;
   --colors_bg_elevated: #fff;
   --colors_bg_status_warning: #ffe600;
   --colors_bg_data_primary: #0038ff;
@@ -27,6 +28,7 @@
   --sel-bg: #8fa8ff;
   --sel-fg: #000;
   --colors_bg_default: #14141c;
+  --colors_bg_subtle: #1b1b26;
   --colors_bg_elevated: #1f1f2b;
   --colors_bg_status_warning: #e8c41a;
   --colors_bg_data_primary: #3a5bd9;
@@ -38,9 +40,18 @@
   --shadow_large: 8px 8px 0 #4a4a63;
 }
 html { scroll-behavior: smooth; }
-section { scroll-margin-top: 24px; }
+section { scroll-margin-top: 88px; }
 body { margin: 0; font-family: var(--typo_font_sans); color: var(--colors_text_default); background: var(--colors_bg_default); }
 a { color: var(--link); font-weight: 700; }
 
 /* Text selection: hard black-on-yellow, inverted in dark mode. */
 ::selection { background: var(--sel-bg); color: var(--sel-fg); text-shadow: none; }
+
+/* Sticky nav: springy drop when it sticks, small settle when it releases. */
+nav[data-stuck='true'] { box-shadow: 0 4px 0 var(--colors_border_interactive); }
+@media (prefers-reduced-motion: no-preference) {
+  nav[data-stuck='true'] { animation: nav-stick 0.55s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  nav[data-stuck='false'] { animation: nav-unstick 0.45s cubic-bezier(0.34, 1.56, 0.64, 1); }
+}
+@keyframes nav-stick { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+@keyframes nav-unstick { from { transform: translateY(-12px); } to { transform: translateY(0); } }

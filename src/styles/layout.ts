@@ -14,7 +14,7 @@ export const page = stylesheet({
 })
 
 export const nav = stylesheet({
-  Root: { $kind: 'view', display: 'flex', flexLayout: 'row', justifyContent: 'flex-end', alignItems: 'center', flexWrap: 'wrap', gap: 4, paddingY: 3, ...rule('0 0 3px 0') },
+  Root: { $kind: 'view', display: 'flex', flexLayout: 'row', justifyContent: 'flex-end', alignItems: 'center', flexWrap: 'wrap', gap: 4, paddingX: 6, paddingY: 3, bgColor: 'subtle', ...rule('0 0 3px 0'), '@platform web': { $style: { position: 'sticky', top: 0, zIndex: 10, marginLeft: '-24px', marginRight: '-24px', marginTop: '-24px', borderStyle: 'solid', borderWidth: '0 0 3px 0' } } },
   Link: { $kind: 'text', typography: 'label-large', textTransform: 'uppercase', textColor: 'default' },
 })
 
