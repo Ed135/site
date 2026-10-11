@@ -13,7 +13,7 @@ const countries = () => {
 const link = (title: string) => nav.find((n) => n.title === title)!.href
 
 // Known commands. Each returns the lines to print and an optional side effect. Anything else gets a canned reply (see `replies`).
-const commands: { cmd: string; hint: string; run: () => { out: string[]; then?: () => void } }[] = [
+const commands: { cmd: string; hint: string; href?: string; run: () => { out: string[]; then?: () => void } }[] = [
   { cmd: 'whoami', hint: 'who is this', run: () => ({ out: [profile.name, profile.role, '', profile.summary] }) },
   { cmd: 'stack', hint: 'what I build with', run: () => ({ out: [stack.map((s) => `[${s}]`).join(' ')] }) },
   { cmd: 'hobbies', hint: 'off the clock', run: () => ({ out: [personal.lead, ...personal.things.map((t) => `  - ${t}`)] }) },
@@ -34,9 +34,10 @@ const commands: { cmd: string; hint: string; run: () => { out: string[]; then?: 
   },
   { cmd: 'oss', hint: 'open source', run: () => ({ out: contributions.map((c) => `  ${c.title}  ${c.href}`) }) },
   { cmd: 'open photos', hint: 'go to the gallery', run: () => ({ out: ['opening gallery…'], then: () => { location.hash = '#/photos' } }) },
-  // External links are printed as clickable links: a window.open after the typing animation has lost the user gesture and is blocked.
-  { cmd: 'open github', hint: 'link', run: () => ({ out: ['GitHub  ' + link('GitHub')] }) },
-  { cmd: 'open linkedin', hint: 'link', run: () => ({ out: ['LinkedIn  ' + link('LinkedIn')] }) },
+  // `href` commands open in a new tab straight from the tap/Enter (browsers block it once the typing animation has run);
+  // the link is also printed, as a fallback if a popup blocker still stops it.
+  { cmd: 'open github', hint: 'new tab', href: link('GitHub'), run: () => ({ out: ['GitHub  ' + link('GitHub')] }) },
+  { cmd: 'open linkedin', hint: 'new tab', href: link('LinkedIn'), run: () => ({ out: ['LinkedIn  ' + link('LinkedIn')] }) },
   { cmd: 'help', hint: 'list commands', run: () => ({ out: ['Commands (type / to pick one, or anything else to chat):', '', ...commands.filter((c) => c.cmd !== 'help').map((c) => `  /${c.cmd.padEnd(14)} ${c.hint}`)] }) },
   { cmd: 'clear', hint: 'reset', run: () => ({ out: [] }) },
 ]
@@ -192,6 +193,7 @@ export function Terminal() {
   // Runs a known command, animating it being typed (boot and menu picks).
   async function run(cmd: string) {
     if (busy.current) return
+    openLink(cmd)
     const mine = epoch.current
     setText('')
     busy.current = true
@@ -207,6 +209,12 @@ export function Terminal() {
     setTyping(undefined)
     print(`/${cmd}`, cmd)
     busy.current = false
+  }
+
+  // Must run synchronously inside the user's tap or key press, before any await, or mobile browsers block the new tab.
+  function openLink(cmd?: string) {
+    const href = commands.find((c) => c.cmd === cmd)?.href
+    if (href) window.open(href, '_blank', 'noopener')
   }
 
   // Appends the output of a command (or a canned reply when `cmd` is not known).
@@ -226,7 +234,9 @@ export function Terminal() {
     if (menu && matches.length) return void run(matches[Math.min(sel, matches.length - 1)].cmd)
     setText('')
     const key = raw.replace(/^\//, '').toLowerCase().replace(/\s+/g, ' ')
-    print(raw, commands.some((c) => c.cmd === key) ? key : undefined)
+    const known = commands.some((c) => c.cmd === key) ? key : undefined
+    openLink(known)
+    print(raw, known)
   }
 
   function onKeyDown(e: ReactKey<HTMLInputElement>) {
@@ -294,6 +304,7 @@ export function Terminal() {
                 aria-selected={i === sel}
                 className={i === sel ? 'on' : undefined}
                 onMouseEnter={() => setSel(i)}
+                onMouseDown={(e) => e.preventDefault()} // keep the prompt focused so the keyboard (and layout) stays put
                 onClick={() => run(c.cmd)}
               >
                 <b>/{c.cmd}</b> <span>{c.hint}</span>
@@ -303,7 +314,7 @@ export function Terminal() {
         )}
       </div>
       <div className="term-foot">
-        <button type="button" className="term-hint" onClick={() => { setText('/'); input.current?.focus({ preventScroll: true }) }}>
+        <button type="button" className="term-hint" onMouseDown={(e) => e.preventDefault()} onClick={() => { setText('/'); input.current?.focus({ preventScroll: true }) }}>
           <b>/</b> for commands <span>· type anything · ↑↓ select · enter run · esc clear</span>
         </button>
       </div>

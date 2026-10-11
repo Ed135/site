@@ -11,6 +11,11 @@ import { Notes } from './Notes'
 import { OpenSource } from './OpenSource'
 import { profile, nav as navLinks } from './content'
 
+// The map's country paths are a separate chunk; fetch it while the home page is idle so Photos opens with the map already there.
+const prefetch = () => import('./photos/world')
+if ('requestIdleCallback' in window) requestIdleCallback(prefetch)
+else setTimeout(prefetch, 1500)
+
 const P = createElements(page)
 const N = createElements(nav)
 const S = createElements(section)
