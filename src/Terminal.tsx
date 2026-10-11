@@ -165,7 +165,10 @@ export function Terminal() {
     const sync = () => {
       const up = document.activeElement === input.current && window.innerHeight - vv.height > 120
       setKbHeight(up ? vv.height : undefined)
-      if (up) requestAnimationFrame(() => root.current?.scrollIntoView({ block: 'start' }))
+      if (up) requestAnimationFrame(() => {
+        root.current?.scrollIntoView({ block: 'start' })
+        body.current?.scrollTo({ top: body.current.scrollHeight }) // the body just shrank: keep the prompt in view
+      })
     }
     vv.addEventListener('resize', sync)
     addEventListener('focusin', sync)
@@ -265,6 +268,14 @@ export function Terminal() {
             maxLength={60}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={onKeyDown}
+            onFocus={() => {
+              // Tapping the prompt: bring the window and its last line into view now, and again once the keyboard has slid up.
+              const reveal = () => {
+                root.current?.scrollIntoView({ block: 'start' })
+                body.current?.scrollTo({ top: body.current.scrollHeight })
+              }
+              if (matchMedia('(max-width: 600px)').matches) { reveal(); setTimeout(reveal, 350) }
+            }}
             spellCheck={false}
             autoCapitalize="off"
             autoComplete="off"
