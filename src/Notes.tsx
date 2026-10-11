@@ -1,6 +1,6 @@
 import { personal } from './content'
 
-// "Off the clock" as an Apple Notes-style note: window chrome, a title, and a checklist.
+// "Off the clock" as an Apple Notes-style note: window chrome, a title, and a checklist you can tick and untick.
 export function Notes() {
   return (
     <article className="note" aria-label={personal.lead}>
@@ -11,7 +11,13 @@ export function Notes() {
       <div className="note-page">
         <ul>
           {personal.things.map((t) => (
-            <li key={t}><span aria-hidden>✓</span>{t}</li>
+            <li key={t}>
+              <label>
+                <input type="checkbox" defaultChecked />
+                <span aria-hidden>✓</span>
+                {t}
+              </label>
+            </li>
           ))}
         </ul>
       </div>

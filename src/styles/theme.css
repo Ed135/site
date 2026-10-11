@@ -109,12 +109,12 @@ nav[data-stuck='true'] { box-shadow: 0 4px 0 var(--colors_border_interactive); }
   --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   --w-bg: #fbfbfd; --w-text: #1d1d22; --w-muted: #5c5c6c; --w-dim: #8a8a9a; --w-foot: #eeeef3; --w-line: #c4c4ce; --w-sel: #dcdce6;
   --w-bar: linear-gradient(#f2f2f6, #dedee4); --w-ps: #15803d; --w-key: #8a5a00; --w-ring: #2f54d6; --w-media: #e4e4ea;
-  --w-c: #2f7a3b; --w-k: #a626a4; --w-s: #b5502d;
+  --w-c: #2f7a3b; --w-k: #a626a4; --w-s: #b5502d; --w-n: #1c6aa8; --w-t: #0f7b7b;
 }
 :root[data-theme='brutalist'][data-mode='dark'] {
   --w-bg: #14141c; --w-text: #e6e6f0; --w-muted: #b4b4c6; --w-dim: #6a6a80; --w-foot: #1d1d28; --w-line: #000; --w-sel: #2e2e3e;
   --w-bar: linear-gradient(#3a3a46, #2c2c36); --w-ps: #28c840; --w-key: #ffe600; --w-ring: #8fa8ff; --w-media: #000;
-  --w-c: #6a9955; --w-k: #c586c0; --w-s: #ce9178;
+  --w-c: #6a9955; --w-k: #c586c0; --w-s: #ce9178; --w-n: #b5cea8; --w-t: #4ec9b0;
 }
 .term, .code { margin: 0; border: 3px solid var(--colors_border_interactive); border-radius: 12px; box-shadow: var(--shadow_large); overflow: hidden; background: var(--w-bg); color: var(--w-text); font: 0.9rem/1.5 var(--mono); }
 .term-bar { position: relative; display: flex; align-items: center; justify-content: center; padding: 10px 14px; font: 0.9rem/1.5 var(--mono); background: var(--w-bar); border-bottom: 1px solid var(--w-line); }
@@ -151,22 +151,33 @@ nav[data-stuck='true'] { box-shadow: 0 4px 0 var(--colors_border_interactive); }
 .photo-open { margin-left: auto; }
 .photo-tile:focus-visible { outline: 3px solid var(--w-ring); outline-offset: 3px; }
 
-.code-body { margin: 0; padding: 14px 0; font: inherit; line-height: 1.7; overflow-x: auto; }
-.code-body > div { display: flex; white-space: pre; }
+.code-reset { position: absolute; right: 14px; padding: 2px 8px; font: inherit; font-size: 0.78rem; color: var(--w-muted); background: none; border: 1px solid var(--w-line); border-radius: 6px; cursor: pointer; }
+.code-reset:hover:not(:disabled) { color: var(--w-text); border-color: var(--w-muted); }
+.code-reset:disabled { opacity: 0.4; cursor: default; }
+.code-body { display: flex; padding: 14px 0; line-height: 1.7; overflow-x: auto; }
 .code-body .ln { flex: none; width: 3.2em; padding-right: 1.2em; text-align: right; color: var(--w-dim); user-select: none; }
-.code-body i { font-style: normal; color: var(--w-muted); }
-.code-body .c { color: var(--w-c); }
-.code-body .k { color: var(--w-k); }
-.code-body .s { color: var(--w-s); }
-.code-body a { text-decoration: underline; text-underline-offset: 3px; }
-.code-body a:hover { color: var(--w-key); }
+.code-edit { position: relative; flex: 1; min-width: max-content; display: grid; }
+.code-edit > * { grid-area: 1 / 1; margin: 0; padding: 0; font: inherit; line-height: inherit; white-space: pre; }
+.code-edit pre i { font-style: normal; }
+.code-edit textarea { width: 100%; height: 100%; resize: none; overflow: clip; border: 0; outline: 0; background: none; color: transparent; caret-color: var(--w-key); }
+.code-edit .c { color: var(--w-c); }
+.code-edit .k { color: var(--w-k); }
+.code-edit .s { color: var(--w-s); }
+.code-edit .n { color: var(--w-n); }
+.code-edit .t { color: var(--w-t); }
+.code:focus-within { outline: 3px solid var(--w-ring); outline-offset: 3px; }
+@media (max-width: 600px) { .code { font-size: 16px; } }  /* 16px stops iOS zooming into the textarea */
 
 /* "Off the clock" note: Apple Notes paper, cream in both modes like the real app. */
 .note { display: flex; flex-direction: column; border: 3px solid var(--colors_border_interactive); border-radius: 12px; box-shadow: var(--shadow_large); overflow: hidden; background: #fffbe8; color: #2a2a2a; }
 .note-page { flex: 1; padding: 18px 22px 22px; }
 .note-page ul { margin: 0; padding: 0; list-style: none; }
-.note-page li { display: flex; align-items: center; gap: 12px; height: 36px; font-size: 1.05rem; font-weight: 600; }
-.note-page li span { flex: none; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: #f6c71a; color: #4a3d00; font-size: 0.75rem; font-weight: 800; }
+.note-page li { height: 36px; font-size: 1.05rem; font-weight: 600; }
+.note-page label { position: relative; display: flex; align-items: center; gap: 12px; height: 100%; cursor: pointer; user-select: none; }
+.note-page input { position: absolute; opacity: 0; width: 20px; height: 20px; margin: 0; cursor: pointer; }
+.note-page li span { flex: none; display: grid; place-items: center; width: 20px; height: 20px; box-sizing: border-box; border-radius: 50%; border: 2px solid #f6c71a; background: #f6c71a; color: #4a3d00; font-size: 0.75rem; font-weight: 800; transition: background 0.1s; }
+.note-page input:not(:checked) + span { background: transparent; color: transparent; }
+.note-page input:focus-visible + span { outline: 3px solid #2a2a2a; outline-offset: 2px; }
 
 .sr-only { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
