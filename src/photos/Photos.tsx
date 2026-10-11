@@ -4,7 +4,7 @@ import { gallery } from '../styles'
 import { Card, CardTitle, CardDescription } from '../styles/components/Card'
 import { photos, groups, flag, formatDate, uploadPhoto, type Photo } from './api'
 import { photosRepo } from './config'
-import { WorldMap } from './WorldMap'
+import { WorldMap, countryName } from './WorldMap'
 
 const G = createElements(gallery)
 // No tile is taller than this, portrait or landscape (matches a typical landscape row).
@@ -31,7 +31,7 @@ export function Photos({ upload }: { upload: boolean }) {
   return (
     <>
       {upload && <Uploader />}
-      <WorldMap counts={counts} selected={country} onSelect={setCountry} />
+      <WorldMap counts={counts} selected={country} onSelect={setCountry} card={country && <CountryCard code={country} onOpen={show} />} />
       {photos.length === 0 && (
         <Card>
           <CardTitle>No photos yet</CardTitle>
@@ -66,6 +66,28 @@ export function Photos({ upload }: { upload: boolean }) {
       )}
       {open && <Viewer photo={open} onClose={close} />}
     </>
+  )
+}
+
+// Docked in the map when a country is selected: where, how many, when, and a few thumbnails that open the viewer.
+function CountryCard({ code, onOpen }: { code: string; onOpen: (p: Photo, el: Element) => void }) {
+  const list = photos.filter((p) => p.country === code)
+  const dates = list.flatMap((p) => (p.date ? [p.date] : [])).sort((a, b) => +a - +b)
+  const first = formatDate(dates[0])
+  const last = formatDate(dates[dates.length - 1])
+  return (
+    <aside className="trip-card" aria-label={`${countryName(code)} photos`}>
+      <b>{flag(code)} {countryName(code)}</b>
+      <span>{list.length} photos</span>
+      {first && <span>{first === last ? first : `${first} – ${last}`}</span>}
+      <div>
+        {list.slice(0, 4).map((p) => (
+          <button key={p.name} type="button" aria-label="Open photo" onClick={(e) => onOpen(p, e.currentTarget)}>
+            <img src={p.thumb} alt="" />
+          </button>
+        ))}
+      </div>
+    </aside>
   )
 }
 

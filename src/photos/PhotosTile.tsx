@@ -1,8 +1,8 @@
 import { photos, flag } from './api'
 
-// Home-page teaser for the gallery: the latest shots as a cropped strip, with counts and flags.
+// Home-page teaser for the gallery: an Apple Photos-style grid that runs off the bottom of the window, above a solid status bar.
 export function PhotosTile() {
-  const latest = photos.slice(0, 4)
+  const latest = photos.slice(0, 9)
   const codes = [...new Set(photos.map((p) => p.country).filter(Boolean))] as string[]
   return (
     <a className="term photo-tile" href="#/photos" aria-label={`Photos: ${photos.length} photos from ${codes.length} countries`}>
@@ -10,7 +10,7 @@ export function PhotosTile() {
         <span className="term-dots" aria-hidden><i /><i /><i /></span>
         <span className="term-title">~/photos — {photos.length} items</span>
       </div>
-      <div className="photo-strip" aria-hidden>
+      <div className="photo-grid" aria-hidden>
         {latest.map((p) => <img key={p.name} src={p.thumb} alt="" loading="lazy" />)}
       </div>
       <div className="photo-status">

@@ -67,7 +67,7 @@ const inside = (b: Box, w: Box) => b.x >= w.x && b.y >= w.y && b.x + b.w <= w.x 
 
 // Click a visited country (or its chip) to filter the gallery to it; click again to clear.
 // Drag to pan, pinch or the +/- buttons to zoom.
-export function WorldMap({ counts, selected, onSelect }: { counts: Record<string, number>; selected?: string; onSelect: (code?: string) => void }) {
+export function WorldMap({ counts, selected, onSelect, card }: { counts: Record<string, number>; selected?: string; onSelect: (code?: string) => void; card?: React.ReactNode }) {
   const [world, setWorld] = useState<Record<string, string>>()
   const [box, setBox] = useState<Box>()
   const svg = useRef<SVGSVGElement>(null)
@@ -102,8 +102,7 @@ export function WorldMap({ counts, selected, onSelect }: { counts: Record<string
       const r = el.getBoundingClientRect()
       if (!r.width || !r.height || Math.abs(r.width / r.height - RATIO) < 0.02) return
       RATIO = r.width / r.height
-      setRatio(RATIO)
-      setBox(undefined)
+      setRatio(RATIO) // the fly effect below re-frames the selection (or the opening view) for the new shape
     })
     ro.observe(el)
     return () => ro.disconnect()
@@ -112,9 +111,14 @@ export function WorldMap({ counts, selected, onSelect }: { counts: Record<string
   useEffect(() => {
     const b = selected && boxes[selected]
     if (!b) { setBox(undefined); return }
-    const w = Math.max((b[2] - b[0]) * 1.5, (b[3] - b[1]) * 1.5 * RATIO, 24)
-    setBox(clamp({ x: (b[0] + b[2]) / 2, y: (b[1] + b[3]) / 2, w, h: w / RATIO }, true))
-  }, [selected, boxes])
+    // The country card covers the bottom-left (wide) or bottom (phone) of the map, so park the country in the free part:
+    // top-centre on phones, right of centre on wide screens.
+    const narrow = RATIO < 1.4
+    const [fx, fy, k] = narrow ? [0.5, 0.3, 2.3] : [0.6, 0.45, 1.6]
+    const w = Math.max((b[2] - b[0]) * 1.5, (b[3] - b[1]) * k * RATIO, 24)
+    const h = w / RATIO
+    setBox(clamp({ x: (b[0] + b[2]) / 2 - fx * w, y: (b[1] + b[3]) / 2 - fy * h, w, h }))
+  }, [selected, boxes, ratio])
   if (!world || !visited.length) return null
 
   const toggle = (c: string) => onSelect(selected === c ? undefined : c)
@@ -211,6 +215,7 @@ export function WorldMap({ counts, selected, onSelect }: { counts: Record<string
           <button type="button" aria-label="Zoom out" onClick={() => zoom(1 / 0.6)}>−</button>
           <button type="button" aria-label="Reset map" onClick={() => { setBox(undefined); apply(home) }}>◎</button>
         </div>
+        {card}
         <span className="trip-scale" aria-hidden>{Math.round(360 / vb.w * 10) / 10}×</span>
       </div>
       <div className="trip-chips">
