@@ -14,7 +14,7 @@ const link = (title: string) => nav.find((n) => n.title === title)!.href
 
 // Known commands. Each returns the lines to print and an optional side effect. Anything else gets a canned reply (see `replies`).
 const commands: { cmd: string; hint: string; run: () => { out: string[]; then?: () => void } }[] = [
-  { cmd: 'whoami', hint: 'who is this', run: () => ({ out: [profile.name.toUpperCase(), profile.role, '', profile.summary] }) },
+  { cmd: 'whoami', hint: 'who is this', run: () => ({ out: [profile.name, profile.role, '', profile.summary] }) },
   { cmd: 'stack', hint: 'what I build with', run: () => ({ out: [stack.map((s) => `[${s}]`).join(' ')] }) },
   { cmd: 'hobbies', hint: 'off the clock', run: () => ({ out: [personal.lead, ...personal.things.map((t) => `  - ${t}`)] }) },
   {
