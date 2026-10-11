@@ -78,3 +78,28 @@ nav[data-stuck='true'] { box-shadow: 0 4px 0 var(--colors_border_interactive); }
 :root[data-theme='brutalist'] { --focus: #000; }
 :root[data-theme='brutalist'][data-mode='dark'] { --focus: #ffe600; }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 0; }
+
+/* Trip map on the photos page: heavy frame, hard shadow, neutral hatched sea, visited countries as yellow blocks. */
+.trip-map { border: 5px solid var(--colors_border_interactive); box-shadow: var(--shadow_large); background: var(--colors_bg_elevated); max-width: 100%; }
+.trip-stage { position: relative; background: repeating-linear-gradient(45deg, transparent 0 7px, color-mix(in srgb, var(--colors_text_default) 22%, transparent) 7px 8px), color-mix(in srgb, var(--colors_text_default) 7%, var(--colors_bg_elevated)); border-bottom: 5px solid var(--colors_border_interactive); }
+.trip-map svg {
+  display: block; width: 100%; height: auto; aspect-ratio: 9 / 5; max-height: min(58vh, 540px); margin: 0 auto;
+  touch-action: none; cursor: grab; user-select: none; -webkit-user-select: none;
+  background: none;
+}
+.trip-map svg:active { cursor: grabbing; }
+.trip-map .land { fill: var(--colors_bg_elevated); stroke: var(--colors_border_interactive); stroke-width: calc(var(--k, 0.4) * 0.75); stroke-linejoin: round; shape-rendering: optimizeSpeed; }
+.trip-map .visited { fill: var(--colors_bg_status_warning); cursor: pointer; stroke-width: calc(var(--k, 0.4) * 1.5); outline: none; }
+.trip-map .visited:hover { fill: var(--colors_bg_status_success); }
+.trip-map .visited.on { fill: var(--colors_bg_status_success); stroke-width: calc(var(--k, 0.4) * 2.5); }
+.trip-map .visited:focus-visible { stroke-width: calc(var(--k, 0.4) * 3); stroke-dasharray: 6 3; }
+.trip-ctl { position: absolute; top: 10px; left: 10px; display: flex; flex-direction: column; border: 3px solid var(--colors_border_interactive); box-shadow: var(--shadow_small); background: var(--colors_bg_elevated); }
+.trip-ctl button { font: 700 1.25rem/1 var(--typo_font_sans); width: 44px; height: 44px; padding: 0; cursor: pointer; color: var(--colors_text_default); background: transparent; border: 0; border-radius: 0; }
+.trip-ctl button + button { border-top: 3px solid var(--colors_border_interactive); }
+.trip-ctl button:hover, .trip-ctl button:active { background: var(--colors_bg_status_warning); color: var(--colors_text_on_status_warning); }
+.trip-scale { position: absolute; right: 0; bottom: 0; padding: 2px 8px; font: 700 0.75rem/1.4 ui-monospace, Menlo, monospace; background: var(--colors_bg_elevated); color: var(--colors_text_default); border-top: 3px solid var(--colors_border_interactive); border-left: 3px solid var(--colors_border_interactive); }
+.trip-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px; background: var(--colors_bg_subtle); }
+.trip-chips button { font: 700 0.8rem/1.2 var(--typo_font_sans); text-transform: uppercase; letter-spacing: 0.04em; padding: 8px 10px; min-height: 40px; cursor: pointer; color: var(--colors_text_default); background: var(--colors_bg_elevated); border: 3px solid var(--colors_border_interactive); border-radius: 0; box-shadow: var(--shadow_small); }
+.trip-chips button.on, .trip-chips button:hover { background: var(--colors_bg_status_warning); color: var(--colors_text_on_status_warning); }
+.trip-chips button:active { box-shadow: none; transform: translate(2px, 2px); }
+@media (max-width: 600px) { .trip-map { border-width: 4px; box-shadow: var(--shadow_medium); } .trip-map svg { aspect-ratio: 1 / 1; max-height: 60vh; } }

@@ -4,13 +4,17 @@
 //   3. tripRanges   - every photo whose date falls in a range (inclusive, `YYYY-MM-DD`)
 // Add a line per trip and every photo from it is covered.
 export const tripRanges: { from: string; to: string; country: string }[] = [
+  { from: '2025-08-22', to: '2025-08-31', country: 'CH' },
+  { from: '2025-10-26', to: '2025-11-30', country: 'JP' },
+  { from: '2026-01-26', to: '2026-01-31', country: 'FR' },
+  { from: '2026-03-30', to: '2026-07-31', country: 'ES' },
   { from: '2026-08-12', to: '2026-08-12', country: 'RO' },
   { from: '2026-08-13', to: '2026-08-31', country: 'FR' },
-  { from: '2026-09-01', to: '2026-09-30', country: 'ES' },
+  { from: '2026-09-01', to: '2026-10-31', country: 'ES' },
 ]
 
 // Single-photo overrides, e.g. '2026-08-18_1454': 'GB',
-export const countryTags: Record<string, string> = {}
+export const countryTags: Record<string, string> = { '2026-10-06_0836': 'GB' }
 
 export const countryFor = (name: string, fromFile?: string) => {
   const day = name.slice(0, 10)

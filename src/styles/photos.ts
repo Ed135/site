@@ -4,7 +4,8 @@ import type { Variants } from '@toned/core'
 
 export const gallery = stylesheet((q) => ({
   // Justified rows: each tile grows by its aspect ratio so rows fill the width with no gaps.
-  Grid: { $kind: 'view', display: 'flex', flexWrap: 'wrap', gap: 4 },
+  // Centred on small screens (rows rarely fill the width there); left-aligned from sm40 up.
+  Grid: { $kind: 'view', display: 'flex', flexWrap: 'wrap', gap: 4, justifyContent: 'center', [q.media('sm40')]: { justifyContent: 'flex-start' } },
   Frame: { $kind: 'view', bgColor: 'elevated', borderWidth: 'thick', borderColor: 'interactive', shadow: 'medium', '@platform web': { $style: { position: 'relative', overflow: 'hidden' } } },
   // Date badge tucked into the bottom-left corner of a photo.
   Date: { $kind: 'text', paddingX: 2, paddingY: 1, bgColor: 'elevated', textColor: 'default', typography: 'label-small', textTransform: 'uppercase', borderWidth: 'thick', borderColor: 'interactive', borderRadius: 'none', '@platform web': { $style: { position: 'absolute', left: 0, bottom: 0, borderLeftWidth: 0, borderBottomWidth: 0, pointerEvents: 'none' } } },

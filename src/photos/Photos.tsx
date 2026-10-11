@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { createElements } from '@toned/react'
 import { gallery } from '../styles'
 import { Card, CardTitle, CardDescription } from '../styles/components/Card'
 import { photos, groups, flag, formatDate, uploadPhoto, type Photo } from './api'
-import { photosRepo, camera } from './config'
+import { photosRepo } from './config'
+import { WorldMap } from './WorldMap'
 
 const G = createElements(gallery)
 // No tile is taller than this, portrait or landscape (matches a typical landscape row).
@@ -13,7 +14,10 @@ const read = () => { try { return localStorage.getItem(TOKEN_KEY) ?? '' } catch 
 
 export function Photos({ upload }: { upload: boolean }) {
   const [open, setOpen] = useState<Photo>()
+  const [country, setCountry] = useState<string>()
   const opener = useRef<Element | null>(null)
+  const counts = useMemo(() => photos.reduce<Record<string, number>>((a, p) => (p.country ? { ...a, [p.country]: (a[p.country] ?? 0) + 1 } : a), {}), [])
+  const shown = useMemo(() => (country ? groups.map((g) => ({ ...g, items: g.items.filter((x) => x.photo.country === country) })).filter((g) => g.items.length) : groups), [country])
 
   const show = (p: Photo, el: Element) => {
     opener.current = el // Safari doesn't focus buttons on click, so remember the button itself
@@ -26,10 +30,8 @@ export function Photos({ upload }: { upload: boolean }) {
 
   return (
     <>
-      <Card compact>
-        <CardDescription>📸 {camera}</CardDescription>
-      </Card>
       {upload && <Uploader />}
+      <WorldMap counts={counts} selected={country} onSelect={setCountry} />
       {photos.length === 0 && (
         <Card>
           <CardTitle>No photos yet</CardTitle>
@@ -39,7 +41,7 @@ export function Photos({ upload }: { upload: boolean }) {
       {photos.length > 0 && (
         <G>
           <G.Groups>
-            {groups.map((g) => (
+            {shown.map((g) => (
               <G.Group key={g.key}>
                 <G.Month as="h3">{g.label}</G.Month>
                 <G.Grid>
