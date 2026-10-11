@@ -14,7 +14,11 @@ export const tripRanges: { from: string; to: string; country: string }[] = [
 ]
 
 // Single-photo overrides, e.g. '2026-08-18_1454': 'GB',
-export const countryTags: Record<string, string> = { '2026-10-06_0836': 'GB' }
+export const countryTags: Record<string, string> = {
+  '2026-06-22_2126': 'GB',
+  '2026-07-05_1647': 'GB',
+  '2026-10-06_0836': 'GB',
+}
 
 export const countryFor = (name: string, fromFile?: string) => {
   const day = name.slice(0, 10)

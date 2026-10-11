@@ -34,8 +34,9 @@ const commands: { cmd: string; hint: string; run: () => { out: string[]; then?: 
   },
   { cmd: 'oss', hint: 'open source', run: () => ({ out: contributions.map((c) => `  ${c.title}  ${c.href}`) }) },
   { cmd: 'open photos', hint: 'go to the gallery', run: () => ({ out: ['opening gallery…'], then: () => { location.hash = '#/photos' } }) },
-  { cmd: 'open github', hint: 'new tab', run: () => ({ out: [`opening ${link('GitHub')}`], then: () => window.open(link('GitHub'), '_blank', 'noopener') }) },
-  { cmd: 'open linkedin', hint: 'new tab', run: () => ({ out: [`opening ${link('LinkedIn')}`], then: () => window.open(link('LinkedIn'), '_blank', 'noopener') }) },
+  // External links are printed as clickable links: a window.open after the typing animation has lost the user gesture and is blocked.
+  { cmd: 'open github', hint: 'link', run: () => ({ out: ['GitHub  ' + link('GitHub')] }) },
+  { cmd: 'open linkedin', hint: 'link', run: () => ({ out: ['LinkedIn  ' + link('LinkedIn')] }) },
   { cmd: 'help', hint: 'list commands', run: () => ({ out: ['Commands (type / to pick one, or anything else to chat):', '', ...commands.filter((c) => c.cmd !== 'help').map((c) => `  /${c.cmd.padEnd(14)} ${c.hint}`)] }) },
   { cmd: 'clear', hint: 'reset', run: () => ({ out: [] }) },
 ]
@@ -103,6 +104,10 @@ const nextReply = () => {
   return replies[pick]
 }
 
+// URLs in output become real links (opened by the visitor's own click, so popup blockers allow them).
+const linkify = (line: string) =>
+  line ? line.split(/(https?:\/\/\S+)/).map((part, i) => (i % 2 ? <a key={i} href={part} target="_blank" rel="noopener noreferrer">{part}</a> : part)) : ' '
+
 const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
@@ -114,6 +119,8 @@ export function Terminal() {
   const body = useRef<HTMLDivElement>(null)
   const input = useRef<HTMLInputElement>(null)
   const [size, setSize] = useState('80×24')
+  const [kbHeight, setKbHeight] = useState<number>() // visible height while the phone keyboard is up
+  const root = useRef<HTMLElement>(null)
   const busy = useRef(false)
   const epoch = useRef(0) // bumped on unmount so a half-typed command from a previous mount (StrictMode) stops
 
@@ -149,6 +156,22 @@ export function Terminal() {
   useEffect(() => { body.current?.scrollTo({ top: body.current.scrollHeight }) }, [history, typing, menu])
   useEffect(() => { if (menu) body.current?.querySelector('.term-menu .on')?.scrollIntoView({ block: 'nearest' }) }, [menu, sel])
   useEffect(() => setSel(0), [text])
+
+  // On phones the keyboard covers the lower half of the page. While the prompt is focused, fit the window into the visible
+  // area above it and scroll it to the top so the output and the prompt stay readable.
+  useEffect(() => {
+    const vv = window.visualViewport
+    if (!vv) return
+    const sync = () => {
+      const up = document.activeElement === input.current && window.innerHeight - vv.height > 120
+      setKbHeight(up ? vv.height : undefined)
+      if (up) requestAnimationFrame(() => root.current?.scrollIntoView({ block: 'start' }))
+    }
+    vv.addEventListener('resize', sync)
+    addEventListener('focusin', sync)
+    addEventListener('focusout', sync)
+    return () => { vv.removeEventListener('resize', sync); removeEventListener('focusin', sync); removeEventListener('focusout', sync) }
+  }, [])
 
   // Pressing "/" anywhere on the page jumps into the prompt (unless typing in another field).
   useEffect(() => {
@@ -213,7 +236,7 @@ export function Terminal() {
   }
 
   return (
-    <section className="term" aria-label="Interactive terminal">
+    <section className="term" ref={root} aria-label="Interactive terminal">
       <div className="term-bar">
         <span className="term-dots" aria-hidden><i /><i /><i /></span>
         <span className="term-title">ed — zsh — {size}</span>
@@ -221,6 +244,7 @@ export function Terminal() {
       <div
         className="term-body"
         ref={body}
+        style={kbHeight ? { height: Math.max(140, kbHeight - 190) } : undefined}
         role="log"
         aria-live="polite"
         onClick={() => { if (!getSelection()?.toString()) input.current?.focus({ preventScroll: true }) }}
@@ -228,7 +252,7 @@ export function Terminal() {
         {history.map((r, i) => (
           <div key={i}>
             <div><span className="term-ps">ed@site ~ %</span> {r.cmd}</div>
-            {r.out.map((l, j) => <pre key={j}>{l || ' '}</pre>)}
+            {r.out.map((l, j) => <pre key={j}>{linkify(l)}</pre>)}
           </div>
         ))}
         <label className="term-line">

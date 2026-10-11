@@ -140,7 +140,7 @@ nav[data-stuck='true'] { box-shadow: 0 4px 0 var(--colors_border_interactive); }
 .term-menu button.on { background: var(--w-sel); color: var(--w-text); }
 .term-menu button.on b { color: var(--w-key); }
 .term-hint:focus-visible, .term-menu button:focus-visible { outline: 3px solid var(--w-ring); outline-offset: -3px; }
-@media (max-width: 600px) { .term { font-size: 0.82rem; border-radius: 10px; box-shadow: var(--shadow_medium); } .term-body { height: clamp(420px, 62vh, 600px); } }
+@media (max-width: 600px) { .term { font-size: 0.82rem; border-radius: 10px; box-shadow: var(--shadow_medium); } .term-body { height: clamp(520px, 78vh, 760px); } }
 
 .photo-tile { display: flex; flex-direction: column; text-decoration: none; font-weight: 400; }
 .photo-grid { flex: none; height: 176px; overflow: hidden; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 130px; gap: 2px; background: var(--w-bg); }
@@ -186,3 +186,8 @@ nav[data-stuck='true'] { box-shadow: 0 4px 0 var(--colors_border_interactive); }
   .trip-card b { font-size: 1.24rem; }
   .trip-card button { width: 57px; height: 57px; }
 }
+/* 16px stops iOS Safari zooming the page when the prompt is focused. */
+@media (max-width: 600px) { .term-input { font-size: 16px; } }
+.term-body pre a { color: var(--w-ring); font-weight: 400; text-underline-offset: 3px; }
+.term-body pre a:hover { color: var(--w-key); }
+@media (max-width: 600px) { .term-body pre a { display: inline-block; padding: 8px 0; } }
