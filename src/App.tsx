@@ -6,6 +6,7 @@ import { GitHubIcon, LinkedInIcon, HomeIcon } from './styles/components/Icons'
 import { Switch, SwitchGroup, SwitchDivider, SwitchButton, SunIcon, MoonIcon, SystemIcon } from './styles/components/Switch'
 import { Photos } from './photos/Photos'
 import { Terminal } from './Terminal'
+import { WindowRow, WindowStack } from './Window'
 import { PhotosTile } from './photos/PhotosTile'
 import { Notes } from './Notes'
 import { OpenSource } from './OpenSource'
@@ -108,14 +109,14 @@ function Home() {
   return (
     <>
       <h1 className="sr-only">{profile.name}, {profile.role}</h1>
-      <div className="windows">
+      <WindowStack>
         <Terminal />
-        <div className="windows-row">
+        <WindowRow>
           <Notes />
           <PhotosTile />
-        </div>
+        </WindowRow>
         <OpenSource />
-      </div>
+      </WindowStack>
     </>
   )
 }
@@ -123,10 +124,10 @@ function Home() {
 function PhotosPage({ upload }: { upload: boolean }) {
   useEffect(() => { window.scrollTo(0, 0) }, [])
   return (
-    <section className="windows">
+    <WindowStack as="section">
       <S.Title as="a" href="#/photos">Photos 📷</S.Title>
       <Photos upload={upload} />
-    </section>
+    </WindowStack>
   )
 }
 

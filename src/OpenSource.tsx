@@ -1,6 +1,7 @@
 import { useRef, useState, type KeyboardEvent } from 'react'
 import { contributions } from './content'
 import { newlineWithIndent, tokenize } from './tsEditor'
+import { Window } from './Window'
 
 const initial = [
   '// things I help build in the open',
@@ -42,12 +43,14 @@ export function OpenSource() {
     }
   }
   return (
-    <section className="code" aria-label="Open source contributions (editable)">
-      <div className="term-bar">
-        <span className="term-dots" aria-hidden><i /><i /><i /></span>
-        <span className="term-title">contributions.ts</span>
-        <button type="button" className="code-reset" onClick={() => setText(initial)} disabled={text === initial}>reset</button>
-      </div>
+    <Window
+      as="section"
+      kind="code"
+      className="code"
+      title="contributions.ts"
+      aria-label="Open source contributions (editable)"
+      action={<button type="button" className="code-reset" onClick={() => setText(initial)} disabled={text === initial}>reset</button>}
+    >
       <div className="code-body">
         <div className="ln" aria-hidden>{lines.map((_, i) => <div key={i}>{i + 1}</div>)}</div>
         <div className="code-edit">
@@ -68,6 +71,6 @@ export function OpenSource() {
           />
         </div>
       </div>
-    </section>
+    </Window>
   )
 }

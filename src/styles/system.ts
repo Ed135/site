@@ -4,5 +4,6 @@ import { system } from '@toned/systems/base'
 
 const { breakpoints, ...tokens } = system
 
-export const ui = defineSystem(tokens, { breakpoints })
+// `wide` is the 601px+ split the windows use between their phone and desktop sizing.
+export const ui = defineSystem(tokens, { breakpoints: { __breakpoints: { ...breakpoints.__breakpoints, wide: '37.5625rem' } } })
 export const { stylesheet } = ui

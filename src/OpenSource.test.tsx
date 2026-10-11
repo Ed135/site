@@ -1,8 +1,15 @@
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { OpenSource } from './OpenSource'
 import { newlineWithIndent, tokenize } from './tsEditor'
+
+// The real Window needs the Toned runtime; the editor only needs its title, action and children.
+vi.mock('./Window', () => ({
+  Window: ({ title, action, children }: { title: string; action: React.ReactNode; children: React.ReactNode }) => (
+    <section><header>{title}{action}</header>{children}</section>
+  ),
+}))
 
 afterEach(cleanup)
 

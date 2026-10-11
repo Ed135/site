@@ -1,13 +1,10 @@
 import { personal } from './content'
+import { Window } from './Window'
 
 // "Off the clock" as an Apple Notes-style note: window chrome, a title, and a checklist you can tick and untick.
 export function Notes() {
   return (
-    <article className="note" aria-label={personal.lead}>
-      <div className="term-bar">
-        <span className="term-dots" aria-hidden><i /><i /><i /></span>
-        <span className="term-title">~/off-the-clock — {personal.things.length} items</span>
-      </div>
+    <Window as="article" kind="paper" title={`~/off-the-clock — ${personal.things.length} items`} aria-label={personal.lead}>
       <div className="note-page">
         <ul>
           {personal.things.map((t) => (
@@ -21,6 +18,6 @@ export function Notes() {
           ))}
         </ul>
       </div>
-    </article>
+    </Window>
   )
 }

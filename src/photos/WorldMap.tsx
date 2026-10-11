@@ -1,5 +1,6 @@
 import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { flag } from './api'
+import { Window } from '../Window'
 
 const names = new Intl.DisplayNames('en', { type: 'region' })
 export const countryName = (code: string) => { try { return names.of(code) ?? code } catch { return code } }
@@ -176,11 +177,7 @@ export function WorldMap({ counts, selected, onSelect, card }: { counts: Record<
   const press = (c: string) => { if (!moved.current) toggle(c) }
 
   return (
-    <div className="term trip-map">
-      <div className="term-bar">
-        <span className="term-dots" aria-hidden><i /><i /><i /></span>
-        <span className="term-title">~/map — {visited.length} countries</span>
-      </div>
+    <Window className="trip-map" title={`~/map — ${visited.length} countries`}>
       <div className="trip-stage">
         <svg
           ref={svg}
@@ -226,6 +223,6 @@ export function WorldMap({ counts, selected, onSelect, card }: { counts: Record<
         ))}
         {selected && <button type="button" onClick={() => onSelect(undefined)}>✕ All</button>}
       </div>
-    </div>
+    </Window>
   )
 }

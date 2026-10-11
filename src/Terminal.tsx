@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type KeyboardEvent as ReactKey } from 'rea
 import { profile, personal, stack, contributions, nav } from './content'
 import { photos, flag, formatDate } from './photos/api'
 import { countryName } from './photos/WorldMap'
+import { Window } from './Window'
 
 type Run = { cmd: string; out: string[] }
 
@@ -249,11 +250,7 @@ export function Terminal() {
   }
 
   return (
-    <section className="term" ref={root} aria-label="Interactive terminal">
-      <div className="term-bar">
-        <span className="term-dots" aria-hidden><i /><i /><i /></span>
-        <span className="term-title">ed — zsh — {size}</span>
-      </div>
+    <Window as="section" ref={root} title={`ed — zsh — ${size}`} aria-label="Interactive terminal">
       <div
         className="term-body"
         ref={body}
@@ -318,6 +315,6 @@ export function Terminal() {
           <b>/</b> for commands <span>· type anything · ↑↓ select · enter run · esc clear</span>
         </button>
       </div>
-    </section>
+    </Window>
   )
 }

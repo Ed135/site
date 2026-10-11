@@ -1,9 +1,5 @@
-// Page layout sheets: shell, nav, sections.
+// Page layout sheets: shell, nav, section heading.
 import { stylesheet } from './system'
-
-// Responsive card grid; Toned has no grid-track token, so it's a web-only style.
-const grid = (min: number) =>
-  ({ display: 'grid', gap: 4, '@platform web': { $style: { gridTemplateColumns: `repeat(auto-fit, minmax(min(100%, ${min}px), 1fr))` } } }) as const
 
 // Side gutter steps up with the screen (4 = 16px, 6 = 24px, 10 = 40px, 16 = 64px).
 // The nav sits outside the padded Inner, so it is full-bleed; its padding matches the gutter.
@@ -51,10 +47,7 @@ export const nav = stylesheet((q) => ({
   Label: { $kind: 'text', display: 'none', [q.media('sm40')]: { display: 'inline' } },
 }))
 
+// Page section heading (the Photos page title).
 export const section = stylesheet((q) => ({
-  Root: { $kind: 'view', display: 'flex', flexLayout: 'column', gap: 4 },
   Title: { $kind: 'text', typography: 'heading-2', textTransform: 'uppercase', textColor: 'default', textDecoration: 'none', ':hover': { textDecoration: 'underline' }, [q.media('md')]: { typography: 'heading-1' } },
-  Grid: { $kind: 'view', ...grid(300) },
-  Split: { $kind: 'view', ...grid(320), [q.media('md')]: { gap: 6 } },
-  Tags: { $kind: 'view', display: 'flex', flexLayout: 'row', flexWrap: 'wrap', gap: 3 },
 }))
