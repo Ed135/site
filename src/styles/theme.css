@@ -116,7 +116,13 @@ nav[data-stuck='true'] { box-shadow: 0 4px 0 var(--colors_border_interactive); }
   --w-bar: linear-gradient(#3a3a46, #2c2c36); --w-ps: #28c840; --w-key: #ffe600; --w-ring: #8fa8ff; --w-media: #000;
   --w-c: #6a9955; --w-k: #c586c0; --w-s: #ce9178; --w-n: #b5cea8; --w-t: #4ec9b0;
 }
-.term, .code { margin: 0; border: 3px solid var(--colors_border_interactive); border-radius: 12px; box-shadow: var(--shadow_large); overflow: hidden; background: var(--w-bg); color: var(--w-text); font: 0.9rem/1.5 var(--mono); }
+/* Every window (terminal, map, photos tile, notes, code) shares one frame, shadow and spacing so they sit evenly. */
+:root { --win-gap: 32px; --win-radius: 12px; --win-shadow: var(--shadow_large); }
+@media (max-width: 600px) { :root { --win-gap: 24px; --win-radius: 10px; --win-shadow: var(--shadow_medium); } }
+.windows { display: grid; gap: var(--win-gap); }
+.windows-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: var(--win-gap); }
+.term, .code, .note { margin: 0; border: 3px solid var(--colors_border_interactive); border-radius: var(--win-radius); box-shadow: var(--win-shadow); }
+.term, .code { overflow: hidden; background: var(--w-bg); color: var(--w-text); font: 0.9rem/1.5 var(--mono); }
 .term-bar { position: relative; display: flex; align-items: center; justify-content: center; padding: 10px 14px; font: 0.9rem/1.5 var(--mono); background: var(--w-bar); border-bottom: 1px solid var(--w-line); }
 .term-dots { position: absolute; left: 14px; display: flex; gap: 8px; }
 .term-dots i { width: 12px; height: 12px; border-radius: 50%; background: #ff5f57; box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.25); }
@@ -140,7 +146,7 @@ nav[data-stuck='true'] { box-shadow: 0 4px 0 var(--colors_border_interactive); }
 .term-menu button.on { background: var(--w-sel); color: var(--w-text); }
 .term-menu button.on b { color: var(--w-key); }
 .term-hint:focus-visible, .term-menu button:focus-visible { outline: 3px solid var(--w-ring); outline-offset: -3px; }
-@media (max-width: 600px) { .term { font-size: 0.82rem; border-radius: 10px; box-shadow: var(--shadow_medium); } .term-body { height: clamp(520px, 78vh, 760px); } }
+@media (max-width: 600px) { .term { font-size: 0.82rem; } .term-body { height: clamp(520px, 78vh, 760px); } }
 
 .photo-tile { display: flex; flex-direction: column; text-decoration: none; font-weight: 400; }
 .photo-grid { flex: none; height: 176px; overflow: hidden; display: grid; grid-template-columns: repeat(3, 1fr); grid-auto-rows: 130px; gap: 2px; background: var(--w-bg); }
@@ -169,7 +175,7 @@ nav[data-stuck='true'] { box-shadow: 0 4px 0 var(--colors_border_interactive); }
 @media (max-width: 600px) { .code { font-size: 16px; } }  /* 16px stops iOS zooming into the textarea */
 
 /* "Off the clock" note: Apple Notes paper, cream in both modes like the real app. */
-.note { display: flex; flex-direction: column; border: 3px solid var(--colors_border_interactive); border-radius: 12px; box-shadow: var(--shadow_large); overflow: hidden; background: #fffbe8; color: #2a2a2a; }
+.note { display: flex; flex-direction: column; overflow: hidden; background: #fffbe8; color: #2a2a2a; }
 .note-page { flex: 1; padding: 18px 22px 22px; }
 .note-page ul { margin: 0; padding: 0; list-style: none; }
 .note-page li { height: 36px; font-size: 1.05rem; font-weight: 600; }

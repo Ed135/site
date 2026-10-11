@@ -108,18 +108,14 @@ function Home() {
   return (
     <>
       <h1 className="sr-only">{profile.name}, {profile.role}</h1>
-      <S>
+      <div className="windows">
         <Terminal />
-      </S>
-      <S>
-        <S.Split>
+        <div className="windows-row">
           <Notes />
           <PhotosTile />
-        </S.Split>
-      </S>
-      <S>
+        </div>
         <OpenSource />
-      </S>
+      </div>
     </>
   )
 }
@@ -127,12 +123,10 @@ function Home() {
 function PhotosPage({ upload }: { upload: boolean }) {
   useEffect(() => { window.scrollTo(0, 0) }, [])
   return (
-    <S>
-      <S.Root as="section">
-        <S.Title as="a" href="#/photos">Photos 📷</S.Title>
-        <Photos upload={upload} />
-      </S.Root>
-    </S>
+    <section className="windows">
+      <S.Title as="a" href="#/photos">Photos 📷</S.Title>
+      <Photos upload={upload} />
+    </section>
   )
 }
 
