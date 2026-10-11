@@ -5,9 +5,6 @@ import { stylesheet } from './system'
 const grid = (min: number) =>
   ({ display: 'grid', gap: 4, '@platform web': { $style: { gridTemplateColumns: `repeat(auto-fit, minmax(min(100%, ${min}px), 1fr))` } } }) as const
 
-const rule = (width: string) =>
-  ({ borderColor: 'interactive', '@platform web': { $style: { borderStyle: 'solid', borderWidth: width } } }) as const
-
 // Side gutter steps up with the screen (4 = 16px, 6 = 24px, 10 = 40px, 16 = 64px).
 // The nav sits outside the padded Inner, so it is full-bleed; its padding matches the gutter.
 const gutter = (q: { media: (bp: 'md' | 'lg' | 'xl') => string }) =>

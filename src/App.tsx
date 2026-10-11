@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { createElements } from '@toned/react'
 import { page, nav, section } from './styles'
-import { Card, CardTitle, CardDescription } from './styles/components/Card'
 import { GitHubIcon, LinkedInIcon, HomeIcon } from './styles/components/Icons'
-import { Badge } from './styles/components/Badge'
 import { Switch, SwitchGroup, SwitchDivider, SwitchButton, SunIcon, MoonIcon, SystemIcon } from './styles/components/Switch'
 import { Photos } from './photos/Photos'
-import { profile, personal, posts, contributions, stack, nav as navLinks } from './content'
+import { Terminal } from './Terminal'
+import { PhotosTile } from './photos/PhotosTile'
+import { Notes } from './Notes'
+import { OpenSource } from './OpenSource'
+import { profile, nav as navLinks } from './content'
 
 const P = createElements(page)
 const N = createElements(nav)
@@ -92,27 +94,6 @@ function useStuck() {
   return stuck
 }
 
-function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
-  return (
-    <S>
-      <S.Root as="section" id={id}>
-        <S.Title as="a" href={`#${id}`}>{title}</S.Title>
-        {children}
-      </S.Root>
-    </S>
-  )
-}
-
-function LinkCard({ title, meta, body, href }: { title: string; meta?: string; body?: string; href: string }) {
-  return (
-    <Card as="a" tone="link" feature href={href} {...ext(href)}>
-      <CardTitle>{title}</CardTitle>
-      {meta && <CardDescription>{meta}</CardDescription>}
-      {body && <CardDescription>{body}</CardDescription>}
-    </Card>
-  )
-}
-
 function Home() {
   // Sections render after load, so honour a direct #hash link once they exist.
   useEffect(() => {
@@ -121,58 +102,19 @@ function Home() {
 
   return (
     <>
+      <h1 className="sr-only">{profile.name}, {profile.role}</h1>
       <S>
-        <S.Split as="header">
-          <Card tone="highlight">
-            <CardTitle as="h1" size="lg">{profile.name}</CardTitle>
-            <CardDescription size="lg">{profile.role}</CardDescription>
-            <CardDescription>{profile.summary}</CardDescription>
-          </Card>
-          <Card tone="accent">
-            <CardTitle as="h2" size="section">Stack</CardTitle>
-            <S>
-              <S.Tags>{stack.map((x) => <Badge key={x}>{x}</Badge>)}</S.Tags>
-            </S>
-          </Card>
-        </S.Split>
+        <Terminal />
       </S>
       <S>
         <S.Split>
-          <Card tone="green">
-            <CardDescription size="lg">{personal.lead}</CardDescription>
-            <S>
-              <S.Tags>
-                {personal.things.map((x, i) => (
-                  <Badge key={x} style={{ transform: `rotate(${[-2, 1.5, -1, 2][i % 4]}deg)` }}>{x}</Badge>
-                ))}
-              </S.Tags>
-            </S>
-          </Card>
-          <Card as="a" tone="link" center feature href="#/photos">
-            <CardTitle as="h2" size="section">Photos 📷</CardTitle>
-          </Card>
+          <Notes />
+          <PhotosTile />
         </S.Split>
       </S>
-      <Section id="writing" title="Writing ✍️">
-        <S>
-          <S.Grid>
-            {posts.length === 0 && (
-              <Card feature>
-                <CardTitle>Coming soon</CardTitle>
-                <CardDescription>Posts will land here.</CardDescription>
-              </Card>
-            )}
-            {posts.map((p) => <LinkCard key={p.title} {...p} meta={p.date} body={p.summary} />)}
-          </S.Grid>
-        </S>
-      </Section>
-      <Section id="oss" title="Open source 🌱">
-        <S>
-          <S.Grid>
-            {contributions.map((c) => <LinkCard key={c.title} title={c.title} href={c.href} />)}
-          </S.Grid>
-        </S>
-      </Section>
+      <S>
+        <OpenSource />
+      </S>
     </>
   )
 }

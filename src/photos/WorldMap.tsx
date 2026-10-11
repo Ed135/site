@@ -172,7 +172,11 @@ export function WorldMap({ counts, selected, onSelect }: { counts: Record<string
   const press = (c: string) => { if (!moved.current) toggle(c) }
 
   return (
-    <div className="trip-map">
+    <div className="term trip-map">
+      <div className="term-bar">
+        <span className="term-dots" aria-hidden><i /><i /><i /></span>
+        <span className="term-title">~/map — {visited.length} countries</span>
+      </div>
       <div className="trip-stage">
         <svg
           ref={svg}

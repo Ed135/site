@@ -69,12 +69,14 @@ export function Photos({ upload }: { upload: boolean }) {
   )
 }
 
-// Fill the largest box that fits (94vw x 88vh) at the photo's ratio, so portrait shots are as big as landscape ones.
+// Fill the largest box that fits at the photo's ratio, so portrait shots are as big as landscape ones. dvh follows the
+// visible height on phones (vh includes the browser bar, which pushed photos off-centre); the equal 64px top and bottom
+// margins keep the photo centred and clear of the close button.
 // Small source images are upscaled, so they look softer.
 function fit({ width, height }: Photo): React.CSSProperties {
   const base = { display: 'block', cursor: 'default' } as const
-  if (!width || !height) return { ...base, maxWidth: '94vw', maxHeight: '88vh', objectFit: 'contain' }
-  return { ...base, width: `min(94vw, calc(88vh * ${width / height}))`, height: 'auto' }
+  if (!width || !height) return { ...base, maxWidth: 'calc(100vw - 40px)', maxHeight: 'calc(100dvh - 128px)', objectFit: 'contain' }
+  return { ...base, width: `min(calc(100vw - 40px), calc((100dvh - 128px) * ${width / height}))`, height: 'auto' }
 }
 
 // Near-full-screen viewer: click the backdrop, press Esc, or use the X to close.

@@ -14,7 +14,7 @@ export const gallery = stylesheet((q) => ({
   // Thumbnail button: resets button chrome so the photo fills the frame.
   Thumb: { $kind: 'pressable', '@platform web': { $style: { display: 'block', width: '100%', padding: 0, border: 0, background: 'none', cursor: 'zoom-in' } } },
   // Full-screen viewer: dimmed backdrop, click outside the photo to close.
-  Overlay: { $kind: 'view', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 4, bgColor: 'overlay', '@platform web': { $style: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 100, cursor: 'zoom-out' } } },
+  Overlay: { $kind: 'view', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 4, bgColor: 'overlay', '@platform web': { $style: { position: 'fixed', top: 0, left: 0, right: 0, height: '100dvh', boxSizing: 'border-box', zIndex: 100, cursor: 'zoom-out' } } },
   Close: { $kind: 'pressable', paddingX: 3, paddingY: 1.5, bgColor: 'status_warning', textColor: 'on_status_warning', typography: 'label-large', borderWidth: 'thick', borderColor: 'interactive', borderRadius: 'none', shadow: 'small', '@platform web': { $style: { position: 'absolute', top: '16px', right: '16px', cursor: 'pointer' } } },
   // One block per month: heading, then its justified rows.
   Groups: { $kind: 'view', display: 'flex', flexLayout: 'column', gap: 8 },
