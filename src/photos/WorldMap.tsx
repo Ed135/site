@@ -6,12 +6,11 @@ export const countryName = (code: string) => { try { return names.of(code) ?? co
 
 type Box = { x: number; y: number; w: number; h: number }
 const WORLD: Box = { x: 0, y: 0, w: 360, h: 220 }
-const HOME_ZOOM = 3.5 // preferred opening zoom (wider if the countries don't fit), centred on the visited countries (the readout in the corner shows the same number)
 const PAN_GAIN = 1.2 // the map moves this many times the pointer distance
 let RATIO = 1.8 // map shape, kept equal to the svg element's real width/height (set by a ResizeObserver below) so it never letterboxes
 
-// Opening view, centred on the European visited countries (most of the photos; centring on all of them lands mid-Asia between
-// Spain and Japan). Wide screens open at HOME_ZOOM; a narrow (phone) map fits their bounding box instead.
+// Opening view. Wide screens frame every visited country (Spain to Japan), centred on all of them; a narrow (phone) map
+// frames just the European ones, since the full span would be unreadably small there.
 function fitBox(world: Record<string, string>, codes: string[]): Box {
   const bbox = (cs: string[]) => {
     let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity
@@ -24,19 +23,13 @@ function fitBox(world: Record<string, string>, codes: string[]): Box {
     }
     return { x0, y0, x1, y1 }
   }
-  const narrow = RATIO < 1.4
   // Europe in map units: lon -12..45 -> x 168..225, lat 30..72 -> y 10..85 (Mercator)
   const europe = codes.filter((c) => { const b = bbox([c]); const cx = (b.x0 + b.x1) / 2, cy = (b.y0 + b.y1) / 2; return cx > 168 && cx < 225 && cy > 10 && cy < 85 })
-  const all = bbox(europe.length ? europe : codes)
+  const narrow = RATIO < 1.4 && europe.length > 0
+  const all = bbox(narrow ? europe : codes)
   if (!isFinite(all.x0)) return WORLD
-  const cx = (all.x0 + all.x1) / 2, cy = (all.y0 + all.y1) / 2
-  if (narrow && europe.length) {
-    const w = Math.max((all.x1 - all.x0) * 1.3, (all.y1 - all.y0) * 1.3 * RATIO, 36)
-    return clamp({ x: cx, y: cy, w, h: w / RATIO }, true)
-  }
-  // never opens tighter than the countries themselves: the wide frame is short, so height usually decides
-  const w = Math.max(WORLD.w / HOME_ZOOM, (all.x1 - all.x0) * 1.12, (all.y1 - all.y0) * 1.12 * RATIO)
-  return clamp({ x: cx, y: cy, w, h: w / RATIO }, true)
+  const w = Math.max((all.x1 - all.x0) * (narrow ? 1.3 : 1.08), (all.y1 - all.y0) * (narrow ? 1.3 : 1.08) * RATIO, narrow ? 36 : 50)
+  return clamp({ x: (all.x0 + all.x1) / 2, y: (all.y0 + all.y1) / 2, w, h: w / RATIO }, true)
 }
 
 // Keep the box at the map's shape, no more than the whole world, and inside it. `centred`: x,y is the centre.
