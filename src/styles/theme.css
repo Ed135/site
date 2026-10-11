@@ -155,7 +155,7 @@ nav[data-stuck='true'] { box-shadow: 0 4px 0 var(--colors_border_interactive); }
 .code-reset:hover:not(:disabled) { color: var(--w-text); border-color: var(--w-muted); }
 .code-reset:disabled { opacity: 0.4; cursor: default; }
 .code-body { display: flex; padding: 14px 0; line-height: 1.7; overflow-x: auto; }
-.code-body .ln { flex: none; width: 3.2em; padding-right: 1.2em; text-align: right; color: var(--w-dim); user-select: none; }
+.code-body .ln { flex: none; padding: 0 14px 0 16px; text-align: right; color: var(--w-dim); user-select: none; }
 .code-edit { position: relative; flex: 1; min-width: max-content; display: grid; }
 .code-edit > * { grid-area: 1 / 1; margin: 0; padding: 0; font: inherit; line-height: inherit; white-space: pre; }
 .code-edit pre i { font-style: normal; }
