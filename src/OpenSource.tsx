@@ -1,6 +1,6 @@
 import { useRef, useState, type KeyboardEvent } from 'react'
 import { contributions } from './content'
-import { newlineWithIndent, tokenize } from './tsEditor'
+import { newlineWithIndent, tokenize, urlAt } from './tsEditor'
 import { Window } from './Window'
 
 const initial = [
@@ -12,7 +12,9 @@ const initial = [
 
 // An empty row would collapse to zero height and pull every later row out of step with the textarea, so blanks render as ' '.
 const highlight = (line: string) =>
-  tokenize(line || ' ').map((t, i) => (t.kind ? <i key={i} className={t.kind}>{t.text}</i> : t.text))
+  tokenize(line || ' ').map((t, i) =>
+    t.kind || t.link ? <i key={i} className={t.link ? `${t.kind ?? ''} u` : t.kind}>{t.text}</i> : t.text,
+  )
 
 const indent = '  '
 
@@ -60,6 +62,12 @@ export function OpenSource() {
             rows={lines.length}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={onKeyDown}
+            onClick={(e) => {
+              // A click (not a selection drag) on a link opens it; the caret still lands there for keyboard editing.
+              const el = e.currentTarget
+              const href = el.selectionStart === el.selectionEnd ? urlAt(el.value, el.selectionStart) : undefined
+              if (href) window.open(href, '_blank', 'noopener,noreferrer')
+            }}
             // Enter grows the content before React has resized the box, so the browser scrolls the textarea to keep the caret
             // visible; that offset would leave the typed text on a different row from its highlighted copy. Never let it scroll.
             onScroll={(e) => { e.currentTarget.scrollTop = 0; e.currentTarget.scrollLeft = 0 }}

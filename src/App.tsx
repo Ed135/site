@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { createElements } from '@toned/react'
 import { page, nav, section } from './styles'
-import { GitHubIcon, LinkedInIcon, HomeIcon } from './styles/components/Icons'
-import { Switch, SwitchGroup, SwitchDivider, SwitchButton, SunIcon, MoonIcon, SystemIcon } from './styles/components/Switch'
+import { GitHubIcon, LinkedInIcon, SunIcon, MoonIcon, SystemIcon } from './styles/components/Icons'
 import { Photos } from './photos/Photos'
 import { Terminal } from './Terminal'
 import { WindowRow, WindowStack } from './Window'
@@ -70,34 +69,26 @@ function ModeToggle() {
     } catch {}
   }
 
+  // One button cycling light, dark, then follow-the-system; the icon shows the current choice.
+  const order: Pref[] = ['light', 'dark', 'system']
+  const next = order[(order.indexOf(pref) + 1) % order.length]
+  const icon = { light: SunIcon, dark: MoonIcon, system: SystemIcon }[pref]
   return (
-    <SwitchGroup>
-      <Switch
-        checked={dark}
-        onCheckedChange={(on) => choose(on ? 'dark' : 'light')}
-        label="Dark mode"
-        off={{ text: 'Light', icon: SunIcon }}
-        on={{ text: 'Dark', icon: MoonIcon }}
-      />
-      <SwitchDivider />
-      <SwitchButton active={pref === 'system'} label="Match system setting" icon={SystemIcon} onClick={() => choose('system')} />
-    </SwitchGroup>
+    <N.Item as="button" type="button" aria-label={`Theme: ${pref}. Switch to ${next}.`} title={`Theme: ${pref}`} onClick={() => choose(next)}>
+      {icon}
+    </N.Item>
   )
 }
 
-// undefined until the nav first sticks, so nothing animates on load.
-function useStuck() {
-  const [stuck, setStuck] = useState<boolean>()
+// Day, date and time in the menu bar, like the system clock; ticks every 30 seconds.
+function Clock() {
+  const [now, setNow] = useState(() => new Date())
   useEffect(() => {
-    const update = () => {
-      const now = scrollY > 0 // the nav sits at the very top, so any scroll means it is stuck
-      setStuck((prev) => (prev === undefined && !now ? undefined : now))
-    }
-    update()
-    addEventListener('scroll', update, { passive: true })
-    return () => removeEventListener('scroll', update)
+    const id = setInterval(() => setNow(new Date()), 30_000)
+    return () => clearInterval(id)
   }, [])
-  return stuck
+  const text = now.toLocaleString(undefined, { weekday: 'short', day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' })
+  return <N.Item as="span"><N.Clock as="span">{text}</N.Clock></N.Item>
 }
 
 function Home() {
@@ -143,22 +134,24 @@ function useHash() {
 
 export function App() {
   const hash = useHash()
-  const stuck = useStuck()
 
   return (
     <P>
       <P.Root as="main">
         <N>
-          <N.Root as="nav" data-stuck={stuck === undefined ? undefined : String(stuck)}>
-            <N.Link as="a" href="#" aria-label="Home">{HomeIcon}</N.Link>
+          <N.Root as="nav">
+            <N.Start>
+              <N.Item as="a" href="#" title="Home"><N.Name as="span">{profile.name}</N.Name></N.Item>
+              <N.Item as="a" href="#/photos">Photos</N.Item>
+            </N.Start>
             <N.Group>
               {navLinks.map((l) => (
-                <N.Link key={l.href} as="a" href={l.href} aria-label={l.title} {...ext(l.href)}>
-                  <N.Icon as="span">{navIcons[l.icon]}</N.Icon>
-                  <N.Label as="span">{l.title}</N.Label>
-                </N.Link>
+                <N.Item key={l.href} as="a" href={l.href} aria-label={l.title} title={l.title} {...ext(l.href)}>
+                  {navIcons[l.icon]}
+                </N.Item>
               ))}
               <ModeToggle />
+              <Clock />
             </N.Group>
           </N.Root>
         </N>

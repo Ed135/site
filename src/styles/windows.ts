@@ -32,7 +32,7 @@ export const windowStyles = stylesheet((q) => ({
     paddingY: 2.5,
     '@platform web': { $style: { position: 'relative', font: '0.9rem/1.5 var(--mono)', background: 'var(--w-bar)', borderBottom: '1px solid var(--w-line)' } },
   },
-  dots: { $kind: 'view', display: 'flex', gap: 2, '@platform web': { $style: { position: 'absolute', left: '14px' } } },
+  dots: { $kind: 'view', display: 'flex', gap: 2 },
   dot: { $kind: 'view', '@platform web': { $style: { width: '12px', height: '12px', borderRadius: '50%', boxShadow: 'inset 0 0 0 1px rgb(0 0 0 / 0.25)' } } },
   title: { $kind: 'text', '@platform web': { $style: { fontSize: '0.78rem', color: 'var(--w-muted)' } } },
 })).variants(

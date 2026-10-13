@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { OpenSource } from './OpenSource'
-import { newlineWithIndent, tokenize } from './tsEditor'
+import { newlineWithIndent, tokenize, urlAt } from './tsEditor'
 
 // The real Window needs the Toned runtime; the editor only needs its title, action and children.
 vi.mock('./Window', () => ({
@@ -116,5 +116,39 @@ describe('reset', () => {
     await user.click(reset)
     expect(editor.value).toBe(original)
     expect(reset.disabled).toBe(true)
+  })
+})
+
+describe('links', () => {
+  it('flags https:// text as a link, inside strings and out, without trailing punctuation', () => {
+    expect(tokenize("url: 'https://a.dev/x'")).toEqual([
+      { text: 'url: ' },
+      { text: "'", kind: 's' },
+      { text: 'https://a.dev/x', kind: 's', link: true },
+      { text: "'", kind: 's' },
+    ])
+    expect(tokenize('// see https://b.dev, ok').filter((t) => t.link).map((t) => t.text)).toEqual(['https://b.dev'])
+    expect(tokenize('go https://c.dev.').filter((t) => t.link).map((t) => t.text)).toEqual(['https://c.dev'])
+  })
+
+  it('finds the link under the caret', () => {
+    const text = "a\nurl: 'https://a.dev/x'"
+    expect(urlAt(text, text.indexOf('https') + 3)).toBe('https://a.dev/x')
+    expect(urlAt(text, 0)).toBeUndefined()
+    expect(urlAt(text, text.indexOf('url'))).toBeUndefined()
+  })
+
+  it('opens a clicked link in a new tab but not a drag selection', () => {
+    const { editor } = setup()
+    const open = vi.spyOn(window, 'open').mockImplementation(() => null)
+    const at = editor.value.indexOf('https://') + 4
+    editor.setSelectionRange(at, at)
+    fireEvent.click(editor)
+    expect(open).toHaveBeenCalledWith('https://toned.style/', '_blank', 'noopener,noreferrer')
+    open.mockClear()
+    editor.setSelectionRange(at, at + 3)
+    fireEvent.click(editor)
+    expect(open).not.toHaveBeenCalled()
+    open.mockRestore()
   })
 })

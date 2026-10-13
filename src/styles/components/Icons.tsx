@@ -9,6 +9,15 @@ export const LinkedInIcon = (
   <svg {...base}><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z" /></svg>
 )
 
-export const HomeIcon = (
-  <svg {...base} width={26} height={26}><path d="M12 3 2 12h3v8h5v-5h4v5h5v-8h3L12 3z" /></svg>
+// Theme icons: sun (light), moon (dark), monitor (follow the system).
+const line = { width: 18, height: 18, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2.5, 'aria-hidden': true } as const
+
+export const SunIcon = (
+  <svg {...line}><circle cx="12" cy="12" r="4" /><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2" /></svg>
+)
+export const MoonIcon = (
+  <svg {...line}><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z" /></svg>
+)
+export const SystemIcon = (
+  <svg {...line}><rect x="3" y="4" width="18" height="12" /><path d="M8 20h8M12 16v4" /></svg>
 )

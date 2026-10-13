@@ -14,6 +14,20 @@ export function WindowRow({ className, style, ...props }: React.ComponentProps<'
   return <div {...s.row.with({ className, style })} {...props} />
 }
 
+// The three traffic-light dots and the muted centred title of a window's title bar.
+function Dots({ style }: { style?: React.CSSProperties }) {
+  const s = useStyles(windowStyles)
+  return (
+    <span {...s.dots.with({ style })} aria-hidden>
+      {['#ff5f57', '#febc2e', '#28c840'].map((c) => <i key={c} {...s.dot.with({ style: { background: c } })} />)}
+    </span>
+  )
+}
+function BarTitle({ style, children }: { style?: React.CSSProperties; children: React.ReactNode }) {
+  const s = useStyles(windowStyles)
+  return <span {...s.title.with({ style })}>{children}</span>
+}
+
 // A window: frame, title bar (traffic lights, centred title, optional trailing control) and its content.
 export function Window({
   as: Tag = 'div',
@@ -29,10 +43,8 @@ export function Window({
   return (
     <Tag {...s.frame.with({ className: [kind === 'paper' ? 'win-paper' : 'win', className].filter(Boolean).join(' '), style })} {...props}>
       <div {...s.bar.with({})}>
-        <span {...s.dots.with({})} aria-hidden>
-          {['#ff5f57', '#febc2e', '#28c840'].map((c) => <i key={c} {...s.dot.with({ style: { background: c } })} />)}
-        </span>
-        <span {...s.title.with({})}>{title}</span>
+        <Dots style={{ position: 'absolute', left: 14 }} />
+        <BarTitle>{title}</BarTitle>
         {action}
       </div>
       {children}

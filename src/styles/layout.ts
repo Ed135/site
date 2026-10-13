@@ -1,11 +1,6 @@
 // Page layout sheets: shell, nav, section heading.
 import { stylesheet } from './system'
 
-// Side gutter steps up with the screen (4 = 16px, 6 = 24px, 10 = 40px, 16 = 64px).
-// The nav sits outside the padded Inner, so it is full-bleed; its padding matches the gutter.
-const gutter = (q: { media: (bp: 'md' | 'lg' | 'xl') => string }) =>
-  ({ [q.media('md')]: { paddingX: 6 }, [q.media('lg')]: { paddingX: 10 }, [q.media('xl')]: { paddingX: 16 } }) as const
-
 export const page = stylesheet((q) => ({
   Root: { $kind: 'view', bgColor: 'default' },
   Inner: {
@@ -16,11 +11,11 @@ export const page = stylesheet((q) => ({
     maxWidth: '100%',
     paddingX: 4,
     paddingY: 4,
-    ...gutter(q),
     [q.media('md')]: { gap: 10, paddingX: 6, paddingY: 6 },
   },
 }))
 
+// The nav is a macOS menu bar: translucent, full width, system type; app name and menus left, status items and clock right.
 export const nav = stylesheet((q) => ({
   Root: {
     $kind: 'view',
@@ -28,23 +23,35 @@ export const nav = stylesheet((q) => ({
     flexLayout: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: 3,
-    paddingX: 4,
-    paddingY: 3,
-    bgColor: 'subtle',
-    borderColor: 'interactive',
-    '@platform web': { $style: { position: 'sticky', top: 0, zIndex: 10, borderStyle: 'solid', borderWidth: '0 0 3px 0' } },
-    ...gutter(q),
-    [q.media('md')]: { paddingX: 6, gap: 4 },
+    paddingX: 2,
+    textColor: 'default',
+    '@platform web': {
+      $style: {
+        position: 'sticky',
+        top: 0,
+        zIndex: 10,
+        font: '400 13px/1 var(--typo_font_sans)',
+        background: 'color-mix(in srgb, var(--colors_bg_default) 72%, transparent)',
+        backdropFilter: 'blur(20px) saturate(180%)',
+        borderBottom: '1px solid color-mix(in srgb, var(--colors_text_default) 18%, transparent)',
+      },
+    },
   },
-  // Right-hand cluster: links + theme switch.
-  Group: { $kind: 'view', display: 'flex', flexLayout: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 3, [q.media('md')]: { gap: 4 } },
-  Link: { $kind: 'view', display: 'inline-flex', alignItems: 'center', gap: 1.5, textColor: 'default', typography: 'label-large', textTransform: 'uppercase', textDecoration: 'none' },
-  // Brand icon: hidden on large screens, where the text label is enough.
-  Icon: { $kind: 'view', display: 'inline-flex', [q.media('lg')]: { display: 'none' } },
-  // Text label: hidden on very small screens so only the icon shows.
-  Label: { $kind: 'text', display: 'none', [q.media('sm40')]: { display: 'inline' } },
+  Start: { $kind: 'view', display: 'flex', flexLayout: 'row', alignItems: 'center' },
+  Group: { $kind: 'view', display: 'flex', flexLayout: 'row', alignItems: 'center' },
+  // A menu-bar slot: icon, text menu or the bold app name. Hover fill is in theme.css (it follows light/dark).
+  Item: {
+    $kind: 'view',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textColor: 'default',
+    textDecoration: 'none',
+    '@platform web': { $style: { boxSizing: 'border-box', height: '26px', minWidth: '26px', padding: '0 4px', border: 0, borderRadius: '4px', font: 'inherit', cursor: 'pointer' } },
+  },
+  Name: { $kind: 'text', '@platform web': { $style: { fontWeight: 700 } } },
+  // The clock needs room, so phones drop it.
+  Clock: { $kind: 'text', display: 'none', [q.media('wide')]: { display: 'inline' } },
 }))
 
 // Page section heading (the Photos page title).

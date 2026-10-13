@@ -4,13 +4,12 @@
 //   layout.ts     page shell, nav, sections
 //   photos.ts     photography page: gallery grid + upload dropzone
 //   windows.ts    macOS-style window frame, title bar and the grids that lay windows out
-//   components/   Card, Switch (adapted from the Toned UI example)
+//   components/   Card, Icons (adapted from the Toned UI example)
 import { page, nav, section } from './layout'
 import { gallery } from './photos'
 import { windowStyles } from './windows'
 import { cardStyles } from './components/Card'
-import { switchStyles } from './components/Switch'
 
 export { ui } from './system'
 export { page, nav, section, gallery, windowStyles }
-export const sheets = [page, nav, section, gallery, windowStyles, cardStyles, switchStyles]
+export const sheets = [page, nav, section, gallery, windowStyles, cardStyles]

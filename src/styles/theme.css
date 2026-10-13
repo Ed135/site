@@ -55,14 +55,9 @@ a { color: var(--link); font-weight: 700; }
 /* Text selection: hard black-on-yellow, inverted in dark mode. */
 ::selection { background: var(--sel-bg); color: var(--sel-fg); text-shadow: none; }
 
-/* Sticky nav: the hard shadow snaps in and out in a few steps, no easing. */
-nav[data-stuck='true'] { box-shadow: 0 4px 0 var(--colors_border_interactive); }
-@media (prefers-reduced-motion: no-preference) {
-  nav[data-stuck='true'] { animation: nav-stick 0.15s steps(3, end); }
-  nav[data-stuck='false'] { animation: nav-unstick 0.15s steps(3, end); }
-}
-@keyframes nav-stick { from { box-shadow: 0 0 0 var(--colors_border_interactive); } }
-@keyframes nav-unstick { from { box-shadow: 0 4px 0 var(--colors_border_interactive); } to { box-shadow: 0 0 0 var(--colors_border_interactive); } }
+/* Menu bar items: no fill until hovered, then a soft highlight like macOS (inline $style can't carry the hover fill). */
+nav :is(a, button, span) { background: none; }
+@media (hover: hover) { nav :is(a, button):hover { background: color-mix(in srgb, var(--colors_text_default) 16%, transparent); } }
 
 /* Light/dark change: the new theme wipes in from the top left to the bottom right with a jagged edge.
    The polygon grows from a point; its far edge is a ragged diagonal, so the front is uneven. */
@@ -162,6 +157,7 @@ nav[data-stuck='true'] { box-shadow: 0 4px 0 var(--colors_border_interactive); }
 .code-edit .s { color: var(--w-s); }
 .code-edit .n { color: var(--w-n); }
 .code-edit .t { color: var(--w-t); }
+.code-edit .u { text-decoration: underline; text-underline-offset: 3px; }
 .code:focus-within { outline: 3px solid var(--w-ring); outline-offset: 3px; }
 
 /* "Off the clock" note content (the paper window itself is windows.ts kind="paper"). */
