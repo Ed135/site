@@ -12,7 +12,7 @@ export function WindowStack({ as: Tag = 'div', className, style, ...props }: Pro
 }
 export function WindowRow({ className, style, ...props }: React.ComponentProps<'div'>) {
   const s = useStyles(windowStyles)
-  return <div {...s.row.with({ className, style })} {...props} />
+  return <div {...s.row.with({ className: ['win-row', className].filter(Boolean).join(' '), style })} {...props} />
 }
 
 // Minimized windows (dock label and icon per window id) and how many windows are on screen. A new snapshot per change so

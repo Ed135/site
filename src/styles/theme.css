@@ -59,6 +59,9 @@ a { color: var(--link); font-weight: 700; }
 nav :is(a, button, span) { background: none; }
 @media (hover: hover) { nav :is(a, button):hover { background: color-mix(in srgb, var(--colors_text_default) 16%, transparent); } }
 
+/* A row whose windows are all minimized is empty: drop it so it doesn't leave an extra stack gap behind. */
+.win-row:empty { display: none; }
+
 /* Dock: minimized windows are app icons fanned in a stack, each with its own look; hover the dock to spread them out and see names. */
 .dock { padding: 8px 12px; gap: 0; }
 .dock button {
