@@ -5,7 +5,7 @@ import { page, nav, section } from './styles'
 import { GitHubIcon, LinkedInIcon, SunIcon, MoonIcon, SystemIcon } from './styles/components/Icons'
 import { Photos } from './photos/Photos'
 import { Terminal } from './Terminal'
-import { WindowRow, WindowStack } from './Window'
+import { Dock, WindowRow, WindowStack } from './Window'
 import { PhotosTile } from './photos/PhotosTile'
 import { Notes } from './Notes'
 import { OpenSource } from './OpenSource'
@@ -158,6 +158,7 @@ export function App() {
         <P.Inner>
           {hash.startsWith('#/photos') ? <PhotosPage upload={hash === '#/photos/upload'} /> : <Home />}
         </P.Inner>
+        <Dock />
       </P.Root>
     </P>
   )

@@ -177,7 +177,7 @@ export function WorldMap({ counts, selected, onSelect, card }: { counts: Record<
   const press = (c: string) => { if (!moved.current) toggle(c) }
 
   return (
-    <Window className="trip-map" title={`~/map — ${visited.length} countries`}>
+    <Window icon="map" className="trip-map" title={`~/map — ${visited.length} countries`}>
       <div className="trip-stage">
         <svg
           ref={svg}

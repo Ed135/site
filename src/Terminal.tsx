@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent as ReactKey } from 'react'
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKey } from 'react'
 import { profile, personal, stack, contributions, nav } from './content'
 import { photos, flag, formatDate } from './photos/api'
 import { countryName } from './photos/WorldMap'
@@ -118,7 +118,10 @@ export function Terminal() {
   const [typing, setTyping] = useState<string>()
   const [text, setText] = useState('')
   const [sel, setSel] = useState(0)
-  const body = useRef<HTMLDivElement>(null)
+  const body = useRef<HTMLDivElement | null>(null)
+  // The body is a new element each time the window comes back from the dock, so measure whichever one is current.
+  const [bodyEl, setBodyEl] = useState<HTMLDivElement | null>(null)
+  const bodyRef = useCallback((el: HTMLDivElement | null) => { body.current = el; if (el) setBodyEl(el) }, [])
   const input = useRef<HTMLInputElement>(null)
   const [size, setSize] = useState('80×24')
   const [kbHeight, setKbHeight] = useState<number>() // visible height while the phone keyboard is up
@@ -137,7 +140,7 @@ export function Terminal() {
   }, [])
   // Title shows the real grid: columns × rows of monospace characters that fit the window, updated on resize.
   useEffect(() => {
-    const el = body.current
+    const el = bodyEl
     if (!el) return
     const measure = () => {
       const cs = getComputedStyle(el)
@@ -154,8 +157,8 @@ export function Terminal() {
     const ro = new ResizeObserver(measure)
     ro.observe(el)
     return () => ro.disconnect()
-  }, [])
-  useEffect(() => { body.current?.scrollTo({ top: body.current.scrollHeight }) }, [history, typing, menu])
+  }, [bodyEl])
+  useEffect(() => { body.current?.scrollTo({ top: body.current.scrollHeight }) }, [history, typing, menu, bodyEl])
   useEffect(() => { if (menu) body.current?.querySelector('.term-menu .on')?.scrollIntoView({ block: 'nearest' }) }, [menu, sel])
   useEffect(() => setSel(0), [text])
 
@@ -250,10 +253,10 @@ export function Terminal() {
   }
 
   return (
-    <Window as="section" ref={root} title={`ed — zsh — ${size}`} aria-label="Interactive terminal">
+    <Window as="section" ref={root} title={`ed — zsh — ${size}`} label="ed — zsh" icon="terminal" aria-label="Interactive terminal">
       <div
         className="term-body"
-        ref={body}
+        ref={bodyRef}
         style={kbHeight ? { height: Math.max(140, kbHeight - 190) } : undefined}
         role="log"
         aria-live="polite"

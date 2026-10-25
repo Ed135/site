@@ -48,6 +48,7 @@ export function OpenSource() {
     <Window
       as="section"
       kind="code"
+      icon="code"
       className="code"
       title="contributions.ts"
       aria-label="Open source contributions (editable)"

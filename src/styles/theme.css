@@ -59,6 +59,100 @@ a { color: var(--link); font-weight: 700; }
 nav :is(a, button, span) { background: none; }
 @media (hover: hover) { nav :is(a, button):hover { background: color-mix(in srgb, var(--colors_text_default) 16%, transparent); } }
 
+/* Dock: minimized windows are app icons fanned in a stack, each with its own look; hover the dock to spread them out and see names. */
+.dock { padding: 8px 12px; gap: 0; }
+.dock button {
+  position: relative;
+  flex: none;
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  border: 1.5px solid rgb(255 255 255 / 0.28);
+  border-radius: 13px;
+  overflow: hidden;
+  cursor: pointer;
+  color: #fff;
+  background: var(--w-bar);
+  box-shadow: 0 3px 8px rgb(0 0 0 / 0.35);
+  transform: rotate(var(--tilt, 0deg));
+  transition: margin 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: dock-pop 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.dock button + button { margin-left: -30px; }
+.dock button:nth-child(odd) { --tilt: -5deg; }
+.dock button:nth-child(even) { --tilt: 4deg; }
+.dock button:nth-child(n + 2) { z-index: 1; }
+.dock button:nth-child(n + 3) { z-index: 2; }
+.dock button:nth-child(n + 4) { z-index: 3; }
+.dock button:nth-child(n + 5) { z-index: 4; }
+.dock button::before, .dock button::after { position: absolute; display: grid; place-items: center; }
+/* One icon per app: terminal prompt, notes pad, photo, braces, globe. */
+.dock button[data-icon='terminal'] { background: #14141c; }
+.dock button[data-icon='terminal']::before { content: '>_'; inset: 0; font: 700 18px/1 var(--mono); color: #28c840; }
+.dock button[data-icon='notes'] { background: #fffbe8 repeating-linear-gradient(transparent 0 9px, #d9cf9a 9px 10px) 0 12px / 100% 100%; }
+.dock button[data-icon='notes']::before { content: ''; inset: 0 0 auto; height: 11px; background: #ffd84d; }
+.dock button[data-icon='notes']::after { content: '✓'; inset: 14px 0 0; font: 700 22px/1 var(--mono); color: #2f9e44; }
+.dock button[data-icon='photos'] { background: radial-gradient(circle at 74% 26%, #fff3a0 0 5px, transparent 6px), linear-gradient(#5aa9ff, #ffb36b); }
+.dock button[data-icon='photos']::before { content: ''; inset: auto 0 0; height: 24px; background: #2e3b55; clip-path: polygon(0 100%, 0 70%, 28% 20%, 48% 60%, 64% 38%, 100% 80%, 100% 100%); }
+.dock button[data-icon='code'] { background: linear-gradient(135deg, #2b2f6b, #14142e); }
+.dock button[data-icon='code']::before { content: '{ }'; inset: 0; font: 700 18px/1 var(--mono); color: #ffe600; }
+.dock button[data-icon='map'] { background: radial-gradient(circle at 28% 38%, #4fae6a 0 9px, transparent 10px), radial-gradient(circle at 66% 62%, #4fae6a 0 12px, transparent 13px), #2a6fdb; }
+.dock button[data-icon='map']::before { content: ''; width: 9px; height: 9px; inset: 14px auto auto 30px; border-radius: 50%; background: #ff5f57; box-shadow: 0 0 0 3px rgb(255 95 87 / 0.35); }
+/* The name appears above an icon like a Dock label. */
+.dock button span {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  translate: -50% 4px;
+  padding: 5px 9px;
+  border-radius: 6px;
+  white-space: nowrap;
+  font: 400 12px/1 var(--typo_font_sans);
+  color: var(--w-text);
+  background: var(--w-bar);
+  border: 1px solid var(--w-line);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s, translate 0.15s;
+}
+.dock button { overflow: visible; }
+.dock button::before, .dock button::after { overflow: hidden; }
+@media (hover: hover) {
+  .dock:hover button + button { margin-left: 6px; }
+  .dock button:hover { transform: translateY(-8px) scale(1.18); z-index: 5; }
+  .dock button:hover span { opacity: 1; translate: -50% 0; }
+}
+@keyframes dock-pop { from { opacity: 0; transform: translateY(14px) scale(0.5); } }
+
+/* Every window minimized: an empty desktop with a bouncing "ed" (it changes colour as it travels) and a way back. */
+.saver { position: fixed; inset: 27px 0 0; z-index: 0; display: grid; place-content: center; justify-items: center; gap: 14px; color: var(--w-muted); font: 400 13px/1.4 var(--mono); text-align: center; pointer-events: none; }
+.saver p { margin: 0; }
+.saver button { pointer-events: auto; padding: 6px 14px; border: 1px solid var(--w-line); border-radius: 8px; background: var(--w-bar); color: var(--w-text); font: inherit; cursor: pointer; }
+.saver-logo { position: absolute; z-index: 1; top: 0; left: 0; width: 132px; height: 96px; color: #28c840; animation: saver-x 9s linear infinite alternate, saver-y 6.5s linear infinite alternate, saver-hue 13s linear infinite; }
+.saver-logo svg { display: block; width: 100%; height: 100%; }
+.inv-a { animation: inv-flip 0.8s steps(1) infinite; }
+.inv-b { animation: inv-flip 0.8s steps(1) infinite reverse; }
+.inv-pupil { animation: inv-look 2.4s steps(1) infinite; }
+@keyframes inv-flip { 50% { opacity: 0; } }
+@keyframes inv-look { 25% { transform: translateX(0.5px); } 50% { transform: translateX(0.25px) translateY(0.25px); } 75% { transform: translateX(0.5px) translateY(0.25px); } }
+@keyframes saver-x { to { left: calc(100% - 132px); } }
+@keyframes saver-y { to { top: calc(100% - 96px); } }
+@keyframes saver-hue { to { filter: hue-rotate(360deg); } }
+
+/* Windows funnel into the dock like the macOS genie: the bottom pinches in while the whole window slides and shrinks toward
+   the dock (--dx/--dy is the distance to it); restoring plays the same thing backwards. */
+.win-min { animation: win-min 0.5s cubic-bezier(0.55, 0, 0.8, 0.4) forwards; pointer-events: none; }
+.win-restore { animation: win-restore 0.55s cubic-bezier(0.2, 0.8, 0.25, 1) both; }
+@keyframes win-min {
+  from { transform: none; clip-path: polygon(-5% -5%, 105% -5%, 105% 105%, -5% 105%); }
+  to { transform: translate(var(--dx), var(--dy)) scale(0.1); clip-path: polygon(-5% -5%, 105% -5%, 58% 100%, 42% 100%); opacity: 0.3; }
+}
+@keyframes win-restore {
+  from { transform: translate(var(--dx), var(--dy)) scale(0.1); clip-path: polygon(-5% -5%, 105% -5%, 58% 100%, 42% 100%); opacity: 0.3; }
+  to { transform: none; clip-path: polygon(-5% -5%, 105% -5%, 105% 105%, -5% 105%); }
+}
+@media (prefers-reduced-motion: reduce) { .win-min, .win-restore, .dock button, .saver-logo, .inv-a, .inv-b, .inv-pupil { animation: none; } }
+
 /* Light/dark change: the new theme wipes in from the top left to the bottom right with a jagged edge.
    The polygon grows from a point; its far edge is a ragged diagonal, so the front is uneven. */
 ::view-transition-old(root), ::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
