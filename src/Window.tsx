@@ -32,6 +32,10 @@ const setMinimized = (next: typeof minimized) => {
 const subscribe = (l: () => void) => (listeners.add(l), () => void listeners.delete(l))
 const restore = (id: string) => setMinimized(minimized.filter((m) => m.id !== id))
 
+// Every mounted window's minimize, so the nav can tuck them all away (staggered a little, like a shuffle).
+const minimizers = new Map<string, () => void>()
+export const minimizeAll = () => [...minimizers.values()].forEach((m, i) => setTimeout(m, i * 80))
+
 // Where the genie animation points: the dock's centre. A restore uses the pressed dock entry instead.
 let from: { x: number; y: number } | undefined
 const towardDock = (frame: HTMLElement, x: number, y: number) => {
@@ -126,6 +130,23 @@ export function Window({
   const s = useStyles(windowStyles, { kind })
   const id = useId()
   const hidden = useSyncExternalStore(subscribe, () => minimized.some((m) => m.id === id))
+  const minimize = () => {
+    if (minimized.some((m) => m.id === id)) return
+    const add = () => setMinimized([...minimized, { id, icon, label: label ?? (typeof title === 'string' ? title : 'window') }])
+    const frame = document.querySelector<HTMLElement>(`[data-win="${id}"]`)
+    if (!frame || matchMedia('(prefers-reduced-motion: reduce)').matches) return add()
+    // Funnel toward the dock first, then hand over to the dock.
+    towardDock(frame, innerWidth / 2, innerHeight - 30)
+    frame.classList.remove('win-restore')
+    frame.classList.add('win-min')
+    frame.addEventListener('animationend', add, { once: true })
+  }
+  const minimizeRef = useRef(minimize)
+  minimizeRef.current = minimize
+  useEffect(() => {
+    minimizers.set(id, () => minimizeRef.current())
+    return () => void minimizers.delete(id)
+  }, [id])
   // Count the window while it is on the page; leaving the page also drops its dock entry.
   useEffect(() => {
     mounted++
@@ -158,14 +179,7 @@ export function Window({
           onMinimize={(e) => {
             e.preventDefault() // the photos tile is a link
             e.stopPropagation()
-            const add = () => setMinimized([...minimized, { id, icon, label: label ?? (typeof title === 'string' ? title : 'window') }])
-            const frame = e.currentTarget.closest<HTMLElement>('.win, .win-paper')
-            if (!frame || matchMedia('(prefers-reduced-motion: reduce)').matches) return add()
-            // Funnel toward the dock first, then hand over to the dock.
-            towardDock(frame, innerWidth / 2, innerHeight - 30)
-            frame.classList.remove('win-restore')
-            frame.classList.add('win-min')
-            frame.addEventListener('animationend', add, { once: true })
+            minimize()
           }}
         />
         <BarTitle>{title}</BarTitle>

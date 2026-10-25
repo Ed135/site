@@ -5,7 +5,7 @@ import { page, nav, section } from './styles'
 import { GitHubIcon, LinkedInIcon, SunIcon, MoonIcon, SystemIcon } from './styles/components/Icons'
 import { Photos } from './photos/Photos'
 import { Terminal } from './Terminal'
-import { Dock, WindowRow, WindowStack } from './Window'
+import { Dock, WindowRow, WindowStack, minimizeAll } from './Window'
 import { PhotosTile } from './photos/PhotosTile'
 import { Notes } from './Notes'
 import { OpenSource } from './OpenSource'
@@ -143,6 +143,7 @@ export function App() {
             <N.Start>
               <N.Item as="a" href="#" title="Home"><N.Name as="span">{profile.name}</N.Name></N.Item>
               <N.Item as="a" href="#/photos">Photos</N.Item>
+              <N.Item as="button" type="button" onClick={minimizeAll}>Minimize</N.Item>
             </N.Start>
             <N.Group>
               {navLinks.map((l) => (
